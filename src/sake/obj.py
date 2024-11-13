@@ -59,13 +59,13 @@ class Sake:
         select
             v.id, v.chr, v.pos, v.ref, v.alt
         from
-            read_parquet('$path')
+            read_parquet($path) as v
         where
-            v.chr == '$chrom'
+            v.chr == $chrom
         and
-            v.start > $start
+            v.pos > $start
         and
-            v.stop > $stop
+            v.pos > $stop
         """
 
         return self.__db.execute(
@@ -108,11 +108,11 @@ class Sake:
 
             query = """
             select
-                v.*, g.sample, g.gt, g.ad, g.dp, g.gq,
+                v.*, g.sample, g.gt, g.ad, g.dp, g.gq
             from
-                $variants as v
+                data as v
             left join
-                read_parquet('$path') as g
+                read_parquet($path) as g
             on
                 v.id == g.id
             """
@@ -121,8 +121,7 @@ class Sake:
                 self.__db.execute(
                     query,
                     {
-                        "variants": data,
-                        "path": part_path,
+                        "path": str(part_path),
                     },
                 )
                 .pl()
@@ -165,7 +164,7 @@ class Sake:
             from
                 $variants as v
             left join
-                read_parquet('$path') as a
+                read_parquet($path) as a
             on
                 v.id == a.id
             """
@@ -210,7 +209,7 @@ class Sake:
             from
                 $variants as v
             left join
-                read_parquet('$path') as t
+                read_parquet($path) as t
             on
                 v.sample == t.sample
             """
