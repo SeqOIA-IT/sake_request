@@ -17,9 +17,10 @@ import sake
 DEFAULT_PATH = {
     "aggregations_path": "aggregations",
     "annotations_path": "annotations",
-    "samples_path": pathlib.Path("samples") / "patients.parquet",
-    "variants_path": pathlib.Path("{target}") / "variants.parquet",
     "partitions_path": pathlib.Path("{target}") / "genotypes" / "partitions",
+    "samples_path": pathlib.Path("samples") / "patients.parquet",
+    "transmissions_path": pathlib.Path("{target}") / "genotypes" / "transmissions",
+    "variants_path": pathlib.Path("{target}") / "variants.parquet",
 }
 
 
@@ -36,16 +37,17 @@ class Sake:
     # Optional member generate from sake_path
     aggregations_path: pathlib.Path | None = None
     annotations_path: pathlib.Path | None = None
-    samples_path: pathlib.Path | None = None
-    variants_path: pathlib.Path | None = None
     partitions_path: pathlib.Path | None = None
+    samples_path: pathlib.Path | None = None
+    transmissions_path: pathlib.Path | None = None
+    variants_path: pathlib.Path | None = None
 
     # Private member
     __db: duckdb.DuckDBPyConnection = dataclasses.field(init=False, repr=False)
 
     def __post_init__(self):
         self.__db = duckdb.connect(":memory:", config={"threads": self.threads})
-        os.environ["POLARS_MAX_THREADS"] = self.threads
+        os.environ["POLARS_MAX_THREADS"] = str(self.threads)
 
         for default_field in DEFAULT_PATH:
             if self.__getattribute__(default_field) is None:
@@ -84,7 +86,10 @@ class Sake:
         keep_id_part: bool = False,
         drop_column: list[str] | None = None,
     ) -> polars.DataFrame:
-        """Add genotype information to variants DataFrame."""
+        """Add genotype information to variants DataFrame.
+
+        Require `id` column in variants value
+        """
         variants = sake.utils.add_id_part(variants)
         path_with_target = pathlib.Path(str(self.partitions_path).format(target=target))
 
@@ -140,8 +145,12 @@ class Sake:
         rename_column: bool = True,
         select_column: list[str] | None = None,
     ) -> polars.DataFrame:
-        """Add annotations to variants."""
-        annotation_path = self.annotations_path / f"{name}" / f"{version}" # type: ignore[operator]
+        """Add annotations to variants.
+
+        Require `id` column in variants value
+        """
+        # annotations_path are set in __post_init__
+        annotation_path = self.annotations_path / f"{name}" / f"{version}"  # type: ignore[operator]
 
         schema = polars.read_parquet_schema(annotation_path / "1.parquet")
         columns = list(schema.keys()) if select_column is None else [col for col in schema if col in select_column]
@@ -178,6 +187,64 @@ class Sake:
             result = result.rename({col: f"{name}_{col}" for col in columns})
 
         return result
+
+    def add_transmissions(
+        self,
+        variants: polars.DataFrame,
+    ) -> polars.DataFrame:
+        """Add transmissions information.
+
+        Required pid_crc and sample columns in polars.DataFrame.
+        """
+        all_transmissions = []
+        for (pid_crc, *_), data in variants.group_by(["pid_crc"]):
+            # transmissions_path are set in __post_init__
+            path = self.transmissions_path / f"{pid_crc}.parquet"  # type: ignore[operator]
+
+            if not path.is_file():
+                continue
+
+            query = """
+            select
+                v.*, t.*
+            from
+                $variants as v
+            left join
+                read_parquet('$path') as t
+            on
+                v.sample == t.sample
+            """
+
+            result = (
+                self.__db.execute(
+                    query,
+                    {
+                        "variants": data,
+                        "path": path,
+                    },
+                )
+                .pl()
+                .cast(
+                    {
+                        "father_gt": polars.UInt8,
+                        "mother_gt": polars.UInt8,
+                        "index_gt": polars.UInt8,
+                        "father_dp": polars.UInt32,
+                        "mother_dp": polars.UInt32,
+                        "father_gq": polars.UInt32,
+                        "mother_gq": polars.UInt32,
+                    },
+                )
+                .with_columns(
+                    father_ad=polars.col("father_ad").cast(polars.List(polars.String)).list.join(","),
+                    mother_ad=polars.col("mother_ad").cast(polars.List(polars.String)).list.join(","),
+                    index_ad=polars.col("index_ad").cast(polars.List(polars.String)).list.join(","),
+                )
+            )
+
+            all_transmissions.append(result)
+
+        return polars.concat(all_transmissions)
 
 
 __all__: list[str] = ["Sake"]
