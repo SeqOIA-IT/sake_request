@@ -46,6 +46,7 @@ class Sake:
 
     def __post_init__(self):
         self.__db = duckdb.connect(":memory:", config={"threads": self.threads})
+        os.environ["POLARS_MAX_THREADS"] = self.threads
 
         for default_field in DEFAULT_PATH:
             if self.__getattribute__(default_field) is None:
