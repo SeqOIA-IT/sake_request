@@ -131,4 +131,53 @@ class Sake:
 
         return polars.concat(all_genotypes)
 
+    def add_annotations(
+        self,
+        variants: polars.DataFrame,
+        name: str,
+        version: str,
+        *,
+        rename_column: bool = True,
+        select_column: list[str] | None = None,
+    ) -> polars.DataFrame:
+        """Add annotations to variants."""
+        annotation_path = self.annotations_path / f"{name}" / f"{version}" # type: ignore[operator]
+
+        schema = polars.read_parquet_schema(annotation_path / "1.parquet")
+        columns = list(schema.keys()) if select_column is None else [col for col in schema if col in select_column]
+
+        columns.remove("id")
+
+        all_annotations = []
+        for (chrom, *_), data in variants.group_by(["chr"]):
+            query = """
+            select
+                v.*, $columns
+            from
+                $variants as v
+            left join
+                read_parquet('$path') as a
+            on
+                v.id == a.id
+            """
+
+            result = self.__db.execute(
+                query,
+                {
+                    "columns": columns,
+                    "variants": data,
+                    "path": annotation_path / f"{chrom}.parquet",
+                },
+            ).pl()
+
+            all_annotations.append(result)
+
+        result = polars.concat(all_annotations)
+
+        if rename_column:
+            result = result.rename({col: f"{name}_{col}" for col in columns})
+
+        return result
+
+
 __all__: list[str] = ["Sake"]
