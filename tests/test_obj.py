@@ -156,7 +156,7 @@ def test_set_value() -> None:
     assert database.variants_path == sake_path / "other"
 
 
-def test_extract_variant() -> None:
+def test_extract_variants() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")
     sake = Sake(sake_path)
@@ -168,7 +168,7 @@ def test_extract_variant() -> None:
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
 
-def test_add_genotype() -> None:
+def test_add_genotypes() -> None:
     """Check add genotype."""
     sake_path = pathlib.Path("tests/data")
     sake = Sake(sake_path)
@@ -176,6 +176,30 @@ def test_add_genotype() -> None:
     variants = sake.get_interval("germline", "X", 47115191, 99009863)
 
     result = sake.add_genotype(variants, "germline")
+
+    truth = TRUTH.drop("id_part")
+
+    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
+
+    result = sake.add_genotype(variants, "germline", keep_id_part=True)
+    truth = TRUTH
+
+    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
+
+    result = sake.add_genotype(variants, "germline", drop_column=["gq"])
+    truth = TRUTH.drop("id_part", "gq")
+
+    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
+
+
+def test_add_variants() -> None:
+    """Check add variant."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    data = TRUTH.drop("chr", "pos", "ref", "alt")
+    result = sake.add_variants(data, "germline")
+    print(result)
 
     truth = TRUTH
 

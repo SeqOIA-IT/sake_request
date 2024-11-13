@@ -78,6 +78,27 @@ class Sake:
             },
         ).pl()
 
+    def add_variants(self, data: polars.DataFrame, target: str) -> polars.DataFrame:
+        """Use id of column polars.DataFrame to get variant information."""
+        query = """
+        select
+            v.chr, v.pos, v.ref, v.alt, d.*
+        from
+            read_parquet($path) as v
+        join
+            data as d
+        on
+            v.id == d.id
+        """
+
+        return self.__db.execute(
+            query,
+            {
+                "path": str(self.variants_path).format(target=target),
+            }
+        ).pl()
+
+
     def add_genotype(
         self,
         variants: polars.DataFrame,
@@ -96,7 +117,7 @@ class Sake:
         if drop_column is None:
             drop_column = []
 
-        if keep_id_part:
+        if not keep_id_part:
             drop_column.append("id_part")
 
         all_genotypes = []
