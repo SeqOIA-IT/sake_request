@@ -1,0 +1,164 @@
+[
+    {
+	"sample": "AAA0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "AAAA",
+	"preindication": "p1"
+    },
+    {
+	"sample": "AAA1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": false,
+	"pid_crc": "AAAA",
+	"preindication": "p1"
+    },
+    {
+	"sample": "AAA2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": false,
+	"pid_crc": "AAAA",
+	"preindication": "p1"
+    },
+    {
+	"sample": "BBB0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "BBBB",
+	"preindication": "p1"
+    },
+    {
+	"sample": "BBB1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": false,
+	"pid_crc": "BBBB",
+	"preindication": "p1"
+    },
+    {
+	"sample": "BBB2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": false,
+	"pid_crc": "BBBB",
+	"preindication": "p1"
+    },
+    {
+	"sample": "CCC0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "CCCC",
+	"preindication": "p1"
+    },
+    {
+	"sample": "CCC1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": false,
+	"pid_crc": "CCCC",
+	"preindication": "p1"
+    },
+    {
+	"sample": "CCC2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": false,
+	"pid_crc": "CCCC",
+	"preindication": "p1"
+    },
+    {
+	"sample": "DDD0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "DDDD",
+	"preindication": "p1"
+    },
+    {
+	"sample": "DDD1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": true,
+	"pid_crc": "DDDD",
+	"preindication": "p1"
+    },
+    {
+	"sample": "DDD2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": false,
+	"pid_crc": "DDDD",
+	"preindication": "p1"
+    },
+    {
+	"sample": "EEE0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "EEEE",
+	"preindication": "p1"
+    },
+    {
+	"sample": "EEE1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": false,
+	"pid_crc": "EEEE",
+	"preindication": "p1"
+    },
+    {
+	"sample": "EEE2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": true,
+	"pid_crc": "EEEE",
+	"preindication": "p1"
+    },
+    {
+	"sample": "FFF0",
+	"kindex": true,
+	"gender": "F",
+	"link": "patient",
+	"affected": true,
+	"pid_crc": "FFFF",
+	"preindication": "p1"
+    },
+    {
+	"sample": "FFF1",
+	"kindex": false,
+	"gender": "F",
+	"link": "mere",
+	"affected": false,
+	"pid_crc": "FFFF",
+	"preindication": "p1"
+    },
+    {
+	"sample": "FFF2",
+	"kindex": false,
+	"gender": "M",
+	"link": "pere",
+	"affected": false,
+	"pid_crc": "FFFF",
+	"preindication": "p1"
+    }
+]

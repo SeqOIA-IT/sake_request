@@ -78,7 +78,7 @@ class Sake:
             },
         ).pl()
 
-    def add_variants(self, data: polars.DataFrame, target: str) -> polars.DataFrame:
+    def add_variants(self, _data: polars.DataFrame, target: str) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
         query = """
         select
@@ -86,7 +86,7 @@ class Sake:
         from
             read_parquet($path) as v
         join
-            data as d
+            _data as d
         on
             v.id == d.id
         """
@@ -95,11 +95,10 @@ class Sake:
             query,
             {
                 "path": str(self.variants_path).format(target=target),
-            }
+            },
         ).pl()
 
-
-    def add_genotype(
+    def add_genotypes(
         self,
         variants: polars.DataFrame,
         target: str,
@@ -121,7 +120,7 @@ class Sake:
             drop_column.append("id_part")
 
         all_genotypes = []
-        for (id_part, *_), data in variants.group_by(["id_part"]):
+        for (id_part, *_), _data in variants.group_by(["id_part"]):
             part_path = path_with_target / f"id_part={id_part}/0.parquet"
 
             if not part_path.is_file():
@@ -131,7 +130,7 @@ class Sake:
             select
                 v.*, g.sample, g.gt, g.ad, g.dp, g.gq
             from
-                data as v
+                _data as v
             left join
                 read_parquet($path) as g
             on
@@ -163,7 +162,7 @@ class Sake:
         version: str,
         *,
         rename_column: bool = True,
-        select_column: list[str] | None = None,
+        select_columns: list[str] | None = None,
     ) -> polars.DataFrame:
         """Add annotations to variants.
 
@@ -173,29 +172,27 @@ class Sake:
         annotation_path = self.annotations_path / f"{name}" / f"{version}"  # type: ignore[operator]
 
         schema = polars.read_parquet_schema(annotation_path / "1.parquet")
-        columns = list(schema.keys()) if select_column is None else [col for col in schema if col in select_column]
-
-        columns.remove("id")
+        if "id" in schema:
+            del schema["id"]
+        columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
         all_annotations = []
-        for (chrom, *_), data in variants.group_by(["chr"]):
-            query = """
+        for (chrom, *_), _data in variants.group_by(["chr"]):
+            query = f"""
             select
-                v.*, $columns
+                v.*, {columns}
             from
-                $variants as v
+                _data as v
             left join
                 read_parquet($path) as a
             on
                 v.id == a.id
-            """
+            """  # noqa: S608 we accept risk of sql inject
 
             result = self.__db.execute(
                 query,
                 {
-                    "columns": columns,
-                    "variants": data,
-                    "path": annotation_path / f"{chrom}.parquet",
+                    "path": str(annotation_path / f"{chrom}.parquet"),
                 },
             ).pl()
 
@@ -204,9 +201,43 @@ class Sake:
         result = polars.concat(all_annotations)
 
         if rename_column:
-            result = result.rename({col: f"{name}_{col}" for col in columns})
+            result = result.rename(
+                {col: f"{name}_{col}" for col in schema if select_columns is None or col in select_columns},
+            )
 
         return result
+
+    def add_sample_info(
+        self,
+        _variants: polars.DataFrame,
+        *,
+        select_columns: list[str] | None = None,
+    ) -> polars.DataFrame:
+        """Add sample information.
+
+        Required sample column in polars.DataFrame.
+        """
+        # sampless_path are set in __post_init__
+        schema = polars.read_parquet_schema(self.samples_path)  # type: ignore[arg-type]
+        columns = ",".join([f"s.{col}" for col in schema if select_columns is None or col in select_columns])
+
+        query = f"""
+        select
+            v.*, {columns}
+        from
+            _variants as v
+        left join
+            read_parquet($path) as s
+        on
+            v.sample == s.sample
+        """  # noqa: S608 we accept risk of sql inject
+
+        return self.__db.execute(
+            query,
+            {
+                "path": str(self.samples_path),
+            },
+        ).pl()
 
     def add_transmissions(
         self,
@@ -214,12 +245,11 @@ class Sake:
     ) -> polars.DataFrame:
         """Add transmissions information.
 
-        Required pid_crc and sample columns in polars.DataFrame.
+        Required pid_crc column in polars.DataFrame.
         """
         all_transmissions = []
-        for (pid_crc, *_), data in variants.group_by(["pid_crc"]):
-            # transmissions_path are set in __post_init__
-            path = self.transmissions_path / f"{pid_crc}.parquet"  # type: ignore[operator]
+        for (pid_crc, *_), _data in variants.group_by(["pid_crc"]):
+            path = pathlib.Path(str(self.transmissions_path).format(target="germline")) / f"{pid_crc}.parquet"
 
             if not path.is_file():
                 continue
@@ -228,19 +258,18 @@ class Sake:
             select
                 v.*, t.*
             from
-                $variants as v
+                _data as v
             left join
                 read_parquet($path) as t
             on
-                v.sample == t.sample
+                v.id == t.id
             """
 
             result = (
                 self.__db.execute(
                     query,
                     {
-                        "variants": data,
-                        "path": path,
+                        "path": str(path),
                     },
                 )
                 .pl()
