@@ -78,6 +78,36 @@ class Sake:
             },
         ).pl()
 
+    def get_intervals(self, target: str, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
+        """Get variants in multiple intervals."""
+        query = """
+        select
+            v.id, v.chr, v.pos, v.ref, v.alt
+        from
+            read_parquet($path) as v
+        where
+            v.chr == $chrom
+        and
+            v.pos > $start
+        and
+            v.pos < $stop
+        """
+
+        all_variants = []
+        for chrom, (start, stop) in zip(chroms, zip(starts, stops)):
+            all_variants.append(self.__db.execute(
+                query,
+                {
+                    "path": str(self.variants_path).format(target=target),
+                    "chrom": chrom,
+                    "start": start,
+                    "stop": stop,
+                },
+            ).pl())
+
+        return polars.concat(all_variants)
+
+
     def add_variants(self, _data: polars.DataFrame, target: str) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
         query = """

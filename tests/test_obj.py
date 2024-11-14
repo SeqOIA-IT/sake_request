@@ -536,7 +536,7 @@ def test_set_value() -> None:
     assert database.variants_path == sake_path / "other"
 
 
-def test_extract_variants() -> None:
+def test_get_interval() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")
     sake = Sake(sake_path)
@@ -547,6 +547,14 @@ def test_extract_variants() -> None:
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
+def test_get_intervals() -> None:
+    """Check get interval."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    result = sake.get_intervals("germline", ["X", "10"], [47115191, 47115191], [99009863, 99009863])
+
+    assert result.get_column("id").to_list() == [6369631684756766724, 6275197860862492677, 6316975329873231879, 6308398058992304134, 6368810012415885317, 6369726425292865540, 6337120946989563910, 6386640816105848939, 3766989042919407621, 3802997657887047684, 3759564262087852038, 3721020433152081934, 3767474835932839940, 3798315761282318341, 3808437564679913478, 3779432198831079429, 3790995582231773212, 3757853205099184134, 3743061537447739397, 3729798117944460526]
 
 def test_add_variants() -> None:
     """Check add variant."""

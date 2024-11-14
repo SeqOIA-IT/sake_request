@@ -7,6 +7,7 @@ import pathlib
 
 # 3rd party import
 import polars
+import polars.testing
 
 # project import
 from sake import Sake, utils
