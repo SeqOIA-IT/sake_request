@@ -1,4 +1,4 @@
-"""Test sake submodule."""
+"""Test obj submodule."""
 
 from __future__ import annotations
 
@@ -698,30 +698,34 @@ def test_add_annotations() -> None:
             "cvs_len",
             "aa_pos",
         ],
-            rename_column=False,
+        rename_column=False,
     )
 
-    truth = TRUTH.select(
-        "id",
-        "chr",
-        "pos",
-        "ref",
-        "alt",
-        "snpeff_effect",
-        "snpeff_impact",
-        "snpeff_gene",
-        "snpeff_geneid",
-        "snpeff_feature",
-        "snpeff_feature_id",
-        "snpeff_bio_type",
-        "snpeff_rank",
-        "snpeff_hgvs_c",
-        "snpeff_hgvs_p",
-        "snpeff_cdna_pos",
-        "snpeff_cdna_len",
-        "snpeff_cds_pos",
-        "snpeff_cvs_len",
-        "snpeff_aa_pos",
-    ).unique("id").rename(lambda x: x.replace("snpeff_", ""))
+    truth = (
+        TRUTH.select(
+            "id",
+            "chr",
+            "pos",
+            "ref",
+            "alt",
+            "snpeff_effect",
+            "snpeff_impact",
+            "snpeff_gene",
+            "snpeff_geneid",
+            "snpeff_feature",
+            "snpeff_feature_id",
+            "snpeff_bio_type",
+            "snpeff_rank",
+            "snpeff_hgvs_c",
+            "snpeff_hgvs_p",
+            "snpeff_cdna_pos",
+            "snpeff_cdna_len",
+            "snpeff_cds_pos",
+            "snpeff_cvs_len",
+            "snpeff_aa_pos",
+        )
+        .unique("id")
+        .rename(lambda x: x.replace("snpeff_", ""))
+    )
 
     polars.testing.assert_frame_equal(annotations, truth, check_row_order=False, check_column_order=False)

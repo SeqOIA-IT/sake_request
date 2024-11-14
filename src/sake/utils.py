@@ -21,3 +21,17 @@ def add_id_part(data: polars.DataFrame) -> polars.DataFrame:
             polars.col("id") * 2 // 72057594037927936,
         ),
     )
+
+
+def add_recurrence(data: polars.DataFrame) -> _polars.DataFrame:
+    """Compute recurrence of variant.
+
+    Requirement:
+    - id: variant id
+    - gt: genotype
+    """
+    recurrence = data.group_by("id").agg(
+        sake_AC=polars.sum("gt"),
+    )
+
+    return data.join(recurrence, on="id", how="left")
