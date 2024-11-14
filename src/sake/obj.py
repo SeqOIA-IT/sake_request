@@ -65,7 +65,7 @@ class Sake:
         and
             v.pos > $start
         and
-            v.pos > $stop
+            v.pos < $stop
         """
 
         return self.__db.execute(
@@ -263,6 +263,8 @@ class Sake:
                 read_parquet($path) as t
             on
                 v.id == t.id
+            where
+                v.kindex == True
             """
 
             result = (

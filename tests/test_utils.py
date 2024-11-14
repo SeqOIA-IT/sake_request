@@ -37,7 +37,7 @@ def test_id_part() -> None:
                 2849212168077836294,
                 6566373719143350278,
                 728255311839756293,
-            ]
+            ],
         },
         schema={
             "id": polars.UInt64,
@@ -79,12 +79,18 @@ def test_recurrence() -> None:
     genotyped = sake.add_genotypes(variants, "germline")
     recurrence = utils.add_recurrence(genotyped).select("id", "sake_AC").unique("id")
 
-    print(recurrence.get_column("id").to_list())
-    print(recurrence.get_column("sake_AC").to_list())
     truth = polars.DataFrame(
         {
             "id": [
-               3779432198831079429, 3808437564679913478, 3854716627568295943, 3858706742380593160, 3802997657887047684, 3767474835932839940, 3798315761282318341, 3790995582231773212, 3817462055472988165
+                3779432198831079429,
+                3808437564679913478,
+                3854716627568295943,
+                3858706742380593160,
+                3802997657887047684,
+                3767474835932839940,
+                3798315761282318341,
+                3790995582231773212,
+                3817462055472988165,
             ],
             "sake_AC": [1, 4, 6, 5, 3, 1, 6, 2, 5],
         },

@@ -23,7 +23,7 @@ def add_id_part(data: polars.DataFrame) -> polars.DataFrame:
     )
 
 
-def add_recurrence(data: polars.DataFrame) -> _polars.DataFrame:
+def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     """Compute recurrence of variant.
 
     Requirement:
