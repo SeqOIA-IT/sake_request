@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 # std import
+import typing
+
 # 3rd party import
 import polars
 
 # project import
 
-__all__ = ["add_id_part", "add_recurrence"]
+__all__ = ["add_id_part", "add_recurrence", "list2string", "get_list"]
 
 
 def add_id_part(data: polars.DataFrame) -> polars.DataFrame:
@@ -37,3 +39,23 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     )
 
     return data.join(recurrence, on="id", how="left")
+
+
+def list2string(data: polars.DataFrame, *, column: list[str], separator: str = ",") -> polars.DataFrame:
+    """Convert list in string."""
+    return data.with_columns(
+        [polars.col(name).cast(polars.List(polars.String)).list.join(separator).alias(name) for name in column],
+    )
+
+
+def get_list(
+    data: polars.DataFrame,
+    *,
+    column: list[str],
+    index: int = 0,
+    null_value: typing.Any = 0,
+) -> polars.DataFrame:
+    """Replace list by value at index or null_value if index is out of bound."""
+    return data.with_columns(
+        [polars.col(name).list.get(index, null_on_oob=True).fill_null(null_value).alias(name) for name in column],
+    )
