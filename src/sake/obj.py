@@ -56,7 +56,7 @@ class Sake:
     __db: duckdb.DuckDBPyConnection = dataclasses.field(init=False, repr=False)
 
     def __post_init__(self):
-        self.__db = duckdb.connect(":memory:", config={"threads": self.threads})
+        self.__db = duckdb.connect(":memory:", config={"threads": self.threads, "enable_progress_bar_print": False, "enable_progress": False})
         os.environ["POLARS_MAX_THREADS"] = str(self.threads)
 
         for default_field in DEFAULT_PATH:
