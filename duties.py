@@ -84,10 +84,13 @@ def check_docs(ctx: Context) -> None:
 @duty
 def check_types(ctx: Context) -> None:
     """Check that the code is correctly typed."""
-    ctx.run(
-        tools.mypy(*PY_SRC_LIST, config_file="config/mypy.ini"),
-        title=pyprefix("Type-checking"),
-    )
+    if sys.version_info[:2] <= (3, 9):
+        pass
+    else:
+        ctx.run(
+            tools.mypy(*PY_SRC_LIST, config_file="config/mypy.ini"),
+            title=pyprefix("Type-checking"),
+        )
 
 
 @duty

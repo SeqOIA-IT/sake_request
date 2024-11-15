@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 # std import
-import dataclasses
 import os
 import pathlib
+import sys
+
+if sys.version_info[:2] <= (3, 9):
+    from sake import dataclasses
+else:
+    import dataclasses
 
 # 3rd party import
 import duckdb
@@ -13,6 +18,9 @@ import polars
 
 # project import
 import sake
+
+__all__: list[str] = ["Sake"]
+
 
 DEFAULT_PATH = {
     "aggregations_path": "aggregations",
@@ -95,18 +103,19 @@ class Sake:
 
         all_variants = []
         for chrom, (start, stop) in zip(chroms, zip(starts, stops)):
-            all_variants.append(self.__db.execute(
-                query,
-                {
-                    "path": str(self.variants_path).format(target=target),
-                    "chrom": chrom,
-                    "start": start,
-                    "stop": stop,
-                },
-            ).pl())
+            all_variants.append(
+                self.__db.execute(
+                    query,
+                    {
+                        "path": str(self.variants_path).format(target=target),
+                        "chrom": chrom,
+                        "start": start,
+                        "stop": stop,
+                    },
+                ).pl(),
+            )
 
         return polars.concat(all_variants)
-
 
     def add_variants(self, _data: polars.DataFrame, target: str) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
@@ -326,6 +335,3 @@ class Sake:
             all_transmissions.append(result)
 
         return polars.concat(all_transmissions)
-
-
-__all__: list[str] = ["Sake"]

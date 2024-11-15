@@ -8,6 +8,8 @@ import polars
 
 # project import
 
+__all__ = ["add_id_part", "add_recurrence"]
+
 
 def add_id_part(data: polars.DataFrame) -> polars.DataFrame:
     """Compute and add id_part of polars.DataFrame."""
