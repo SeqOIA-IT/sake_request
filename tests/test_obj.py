@@ -500,6 +500,7 @@ def test_default_value() -> None:
     assert database.sake_path == sake_path
 
     assert os.environ["POLARS_MAX_THREADS"] == str(os.cpu_count())
+    assert not database.activate_tqdm
 
     assert database.aggregations_path == sake_path / "aggregations"
     assert database.annotations_path == sake_path / "annotations"
@@ -515,6 +516,7 @@ def test_set_value() -> None:
 
     database = Sake(
         sake_path,
+        activate_tqdm=True,
         threads=23,
         aggregations_path=sake_path / "other",
         annotations_path=sake_path / "other",
@@ -527,6 +529,7 @@ def test_set_value() -> None:
     assert database.sake_path == sake_path
 
     assert os.environ["POLARS_MAX_THREADS"] == str(23)
+    assert database.activate_tqdm
 
     assert database.aggregations_path == sake_path / "other"
     assert database.annotations_path == sake_path / "other"

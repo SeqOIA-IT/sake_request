@@ -15,6 +15,7 @@ else:
 # 3rd party import
 import duckdb
 import polars
+from tqdm.auto import tqdm
 
 # project import
 import sake
@@ -41,6 +42,7 @@ class Sake:
 
     # Optional member
     threads: int | None = dataclasses.field(default=os.cpu_count())
+    activate_tqdm: bool | None = dataclasses.field(default=False)
 
     # Optional member generate from sake_path
     aggregations_path: pathlib.Path | None = None
@@ -102,7 +104,9 @@ class Sake:
         """
 
         all_variants = []
-        for chrom, (start, stop) in zip(chroms, zip(starts, stops)):
+        iterator = tqdm(zip(chroms, zip(starts, stops))) if self.activate_tqdm else zip(chroms, zip(starts, stops))
+
+        for chrom, (start, stop) in iterator:
             all_variants.append(
                 self.__db.execute(
                     query,
@@ -159,7 +163,13 @@ class Sake:
             drop_column.append("id_part")
 
         all_genotypes = []
-        for (id_part, *_), _data in variants.group_by(["id_part"]):
+        iterator = (
+            tqdm(variants.group_by(["id_part"]), total=variants.get_column("id_part").unique().len())
+            if self.activate_tqdm
+            else variants.group_by(["id_part"])
+        )
+
+        for (id_part, *_), _data in iterator:
             part_path = path_with_target / f"id_part={id_part}/0.parquet"
 
             if not part_path.is_file():
@@ -216,7 +226,13 @@ class Sake:
         columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
         all_annotations = []
-        for (chrom, *_), _data in variants.group_by(["chr"]):
+        iterator = (
+            tqdm(variants.group_by(["chr"]), total=variants.get_column("chr").unique().len())
+            if self.activate_tqdm
+            else variants.group_by(["chr"])
+        )
+
+        for (chrom, *_), _data in iterator:
             query = f"""
             select
                 v.*, {columns}
@@ -287,7 +303,14 @@ class Sake:
         Required pid_crc column in polars.DataFrame.
         """
         all_transmissions = []
-        for (pid_crc, *_), _data in variants.group_by(["pid_crc"]):
+
+        iterator = (
+            tqdm(variants.group_by(["pid_crc"]), total=variants.get_column("pid_crc").unique().len())
+            if self.activate_tqdm
+            else variants.group_by(["pid_crc"])
+        )
+
+        for (pid_crc, *_), _data in iterator:
             path = pathlib.Path(str(self.transmissions_path).format(target="germline")) / f"{pid_crc}.parquet"
 
             if not path.is_file():
