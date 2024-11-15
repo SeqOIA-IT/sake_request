@@ -52,11 +52,14 @@ class Sake:
     transmissions_path: pathlib.Path | None = None
     variants_path: pathlib.Path | None = None
 
-    # Private member
-    __db: duckdb.DuckDBPyConnection = dataclasses.field(init=False, repr=False)
+    # duckdb connection
+    db: duckdb.DuckDBPyConnection = dataclasses.field(init=False, repr=False)
 
     def __post_init__(self):
-        self.__db = duckdb.connect(":memory:", config={"threads": self.threads, "enable_progress_bar_print": False, "enable_progress": False})
+        self.db = duckdb.connect(
+            ":memory:",
+        )
+        self.db.query("SET enable_progress_bar = false;")
         os.environ["POLARS_MAX_THREADS"] = str(self.threads)
 
         for default_field in DEFAULT_PATH:
@@ -78,7 +81,7 @@ class Sake:
             v.pos < $stop
         """
 
-        return self.__db.execute(
+        return self.db.execute(
             query,
             {
                 "path": str(self.variants_path).format(target=target),
@@ -108,7 +111,7 @@ class Sake:
 
         for chrom, (start, stop) in iterator:
             all_variants.append(
-                self.__db.execute(
+                self.db.execute(
                     query,
                     {
                         "path": str(self.variants_path).format(target=target),
@@ -134,7 +137,7 @@ class Sake:
             v.id == d.id
         """
 
-        return self.__db.execute(
+        return self.db.execute(
             query,
             {
                 "path": str(self.variants_path).format(target=target),
@@ -187,7 +190,7 @@ class Sake:
             """
 
             result = (
-                self.__db.execute(
+                self.db.execute(
                     query,
                     {
                         "path": str(part_path),
@@ -244,7 +247,7 @@ class Sake:
                 v.id == a.id
             """  # noqa: S608 we accept risk of sql inject
 
-            result = self.__db.execute(
+            result = self.db.execute(
                 query,
                 {
                     "path": str(annotation_path / f"{chrom}.parquet"),
@@ -287,7 +290,7 @@ class Sake:
             v.sample == s.sample
         """  # noqa: S608 we accept risk of sql inject
 
-        return self.__db.execute(
+        return self.db.execute(
             query,
             {
                 "path": str(self.samples_path),
@@ -330,7 +333,7 @@ class Sake:
             """
 
             result = (
-                self.__db.execute(
+                self.db.execute(
                     query,
                     {
                         "path": str(path),
