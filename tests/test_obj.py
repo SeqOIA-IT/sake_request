@@ -505,6 +505,7 @@ def test_default_value() -> None:
     assert database.aggregations_path == sake_path / "aggregations"
     assert database.annotations_path == sake_path / "annotations"
     assert database.partitions_path == sake_path / "{target}" / "genotypes" / "partitions"
+    assert database.prescriptions_path == sake_path / "{target}" / "genotypes" / "samples"
     assert database.samples_path == sake_path / "samples" / "patients.parquet"
     assert database.transmissions_path == sake_path / "{target}" / "genotypes" / "transmissions"
     assert database.variants_path == sake_path / "{target}" / "variants.parquet"
@@ -521,6 +522,7 @@ def test_set_value() -> None:
         aggregations_path=sake_path / "other",
         annotations_path=sake_path / "other",
         partitions_path=sake_path / "other",
+        prescriptions_path=sake_path / "other",
         samples_path=sake_path / "other",
         transmissions_path=sake_path / "other",
         variants_path=sake_path / "other",
@@ -534,6 +536,7 @@ def test_set_value() -> None:
     assert database.aggregations_path == sake_path / "other"
     assert database.annotations_path == sake_path / "other"
     assert database.partitions_path == sake_path / "other"
+    assert database.prescriptions_path == sake_path / "other"
     assert database.samples_path == sake_path / "other"
     assert database.transmissions_path == sake_path / "other"
     assert database.variants_path == sake_path / "other"
@@ -579,6 +582,57 @@ def test_get_intervals() -> None:
         3757853205099184134,
         3743061537447739397,
         3729798117944460526,
+    ]
+
+
+def test_pid_variant() -> None:
+    """Check get variant of prescription."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    result = sake.get_variant_of_prescription("AAAA", "germline")
+    result = result.filter(polars.col("dp") > 70)
+
+    assert result.get_column("id").sort().to_list() == [
+        2866025335101587460,
+        2866025335101587460,
+        2866025335101587460,
+        3577562291320651781,
+        3577562291320651781,
+        3577562291320651781,
+        3953900094733942790,
+    ]
+
+
+def test_pid_variants() -> None:
+    """Check get variant of prescription."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    result = sake.get_variant_of_prescriptions(["EEEE", "FFFF"], "germline")
+    result = result.filter(polars.col("dp") > 70)
+
+    assert result.get_column("id").sort().to_list() == [
+        374411351667245061,
+        374411351667245061,
+        440931590399328267,
+        1488122785568915463,
+        1488122785568915463,
+        1488122785568915463,
+        1776801427457310727,
+        1776801427457310727,
+        1776801427457310727,
+        5395614109402136580,
+        5888066656457981956,
+        5888066656457981956,
+        5888066656457981956,
+        5981677259675664388,
+        5981677259675664388,
+        5984462191632318470,
+        5984462191632318470,
+        5984462191632318470,
+        6099135273667395590,
+        6099135273667395590,
     ]
 
 

@@ -27,6 +27,7 @@ DEFAULT_PATH = {
     "aggregations_path": "aggregations",
     "annotations_path": "annotations",
     "partitions_path": pathlib.Path("{target}") / "genotypes" / "partitions",
+    "prescriptions_path": pathlib.Path("{target}") / "genotypes" / "samples",
     "samples_path": pathlib.Path("samples") / "patients.parquet",
     "transmissions_path": pathlib.Path("{target}") / "genotypes" / "transmissions",
     "variants_path": pathlib.Path("{target}") / "variants.parquet",
@@ -48,6 +49,7 @@ class Sake:
     aggregations_path: pathlib.Path | None = None
     annotations_path: pathlib.Path | None = None
     partitions_path: pathlib.Path | None = None
+    prescriptions_path: pathlib.Path | None = None
     samples_path: pathlib.Path | None = None
     transmissions_path: pathlib.Path | None = None
     variants_path: pathlib.Path | None = None
@@ -118,6 +120,60 @@ class Sake:
                         "chrom": chrom,
                         "start": start,
                         "stop": stop,
+                    },
+                ).pl(),
+            )
+
+        return polars.concat(all_variants)
+
+    def get_variant_of_prescription(self, prescription: str, target: str) -> polars.DataFrame:
+        """Get all variants of a prescription."""
+        query = """
+        select
+            v.*, g.*
+        from
+            read_parquet($sample_path) as g
+        join
+            read_parquet($variant_path) as v
+        on
+            v.id = g.id
+        """
+
+        return self.db.execute(
+            query,
+            {
+                "sample_path": str(
+                    pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{prescription}.parquet",
+                ),
+                "variant_path": str(self.variants_path).format(target=target),
+            },
+        ).pl()
+
+    def get_variant_of_prescriptions(self, prescriptions: list[str], target: str) -> polars.DataFrame:
+        """Get all variants of multiple prescriptions."""
+        query = """
+        select
+            v.*, g.*
+        from
+            read_parquet($sample_path) as g
+        join
+            read_parquet($variant_path) as v
+        on
+            v.id = g.id
+        """
+
+        iterator = tqdm(prescriptions) if self.activate_tqdm else prescriptions
+
+        all_variants = []
+        for pid in iterator:
+            all_variants.append(
+                self.db.execute(
+                    query,
+                    {
+                        "sample_path": str(
+                            pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{pid}.parquet",
+                        ),
+                        "variant_path": str(self.variants_path).format(target=target),
                     },
                 ).pl(),
             )

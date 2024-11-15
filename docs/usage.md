@@ -46,6 +46,14 @@ df = sake_db.get_intervals("germline", target_chrs, target_start, target_stop)
 
 You can see `get_intervals` as just a loop of `get_interval`.
 
+## Get variants from prescription
+
+```
+df = sake_db.get_variant_of_prescription("AAAA", "germline")
+```
+
+DataFrame contains all variants(id, chr, pos, …) and genotype (gt, ad, …) information of prescription AAAA in germline dataset.
+
 ## Get variants with a specific annotations
 
 ```
@@ -64,7 +72,7 @@ df = sake_db.add_genotypes(df, "germline")
 ```
 
 Now `df` store variants with sample information and genotyping:
-- gt: number of 1 in GT column in vcf
+- gt: number of 1 in GT column in vcf, phasing and . information are lose
 - ad: string that stop AD column in vcf
 - db: DP column in vcf
 - gq: GQ column in vcf
