@@ -636,6 +636,17 @@ def test_pid_variants() -> None:
     ]
 
 
+def test_get_annotations() -> None:
+    """Check get annotations."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    result = sake.get_annotations("snpeff", "4.3t/germline", "germline")
+    result = result.filter(polars.col("snpeff_impact") == "HIGH")
+
+    assert result.get_column("id").sort().to_list() == []
+
+
 def test_add_variants() -> None:
     """Check add variant."""
     sake_path = pathlib.Path("tests/data")

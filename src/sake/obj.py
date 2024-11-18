@@ -180,6 +180,64 @@ class Sake:
 
         return polars.concat(all_variants)
 
+    def get_annotations(
+        self,
+        name: str,
+        version: str,
+        target: str,
+        *,
+        rename_column: bool = True,
+        select_columns: list[str] | None = None,
+    ) -> polars.DataFrame:
+        """Get all variants of an annotations."""
+        annotation_path = self.annotations_path / f"{name}" / f"{version}"  # type: ignore[operator]
+
+        schema = polars.read_parquet_schema(annotation_path / "1.parquet")
+        chromosomes_list = [
+            entry.name.split(".")[0]
+            for entry in os.scandir(annotation_path)
+            if entry.is_file() and entry.name.endswith(".parquet")
+        ]
+
+        if "id" in schema:
+            del schema["id"]
+            columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
+
+        query = f"""
+        select
+            v.*, {columns}
+        from
+            read_parquet($annotation_path) as a
+        join
+            read_parquet($variant_path) as v
+        on
+            v.id = a.id
+        """  # noqa: S608 we accept risk of sql inject
+
+        all_annotations = []
+        iterator = tqdm(chromosomes_list) if self.activate_tqdm else chromosomes_list
+        for chrom in iterator:
+            result = self.db.execute(
+                query,
+                {
+                    "annotation_path": str(
+                        self.annotations_path / f"{name}" / f"{version}" / f"{chrom}.parquet", # type: ignore[operator]
+                    ),
+                    "variant_path": str(self.variants_path).format(target=target),
+                },
+            ).pl()
+
+            all_annotations.append(result)
+
+        result = polars.concat(all_annotations)
+
+        if rename_column:
+            result = result.rename(
+                {col: f"{name}_{col}" for col in schema if select_columns is None or col in select_columns},
+            )
+
+        return result
+
     def add_variants(self, _data: polars.DataFrame, target: str) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
         query = """
@@ -291,18 +349,18 @@ class Sake:
             else variants.group_by(["chr"])
         )
 
-        for (chrom, *_), _data in iterator:
-            query = f"""
-            select
-                v.*, {columns}
-            from
-                _data as v
-            left join
-                read_parquet($path) as a
-            on
-                v.id == a.id
-            """  # noqa: S608 we accept risk of sql inject
+        query = f"""
+        select
+            v.*, {columns}
+        from
+            _data as v
+        left join
+            read_parquet($path) as a
+        on
+            v.id == a.id
+        """  # noqa: S608 we accept risk of sql inject
 
+        for (chrom, *_), _data in iterator:
             result = self.db.execute(
                 query,
                 {
