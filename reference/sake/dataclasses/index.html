@@ -1,0 +1,627 @@
+<!doctype html><html lang=en class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="A set of utils tools to interogate Seqoia dAta laKE"><link href=https://seqoia-ia.github.io/sake_request/reference/sake/dataclasses/ rel=canonical><link href=../abc/ rel=prev><link href=../obj/ rel=next><link rel=icon href=../../../assets/images/favicon.png><meta name=generator content="mkdocs-1.6.1, mkdocs-material-9.5.44"><title>sake.dataclasses - Sake Request</title><link rel=stylesheet href=../../../assets/stylesheets/main.0253249f.min.css><link rel=stylesheet href=../../../assets/stylesheets/palette.06af60db.min.css><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"><style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style><link rel=stylesheet href=../../../assets/_markdown_exec_pyodide.css><link rel=stylesheet href=../../../css/timeago.css><link rel=stylesheet href=../../../assets/_mkdocstrings.css><link rel=stylesheet href=../../../css/material.css><link rel=stylesheet href=../../../css/mkdocstrings.css><script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#sake.dataclasses class=md-skip> Skip to content </a> </div> <div data-md-component=announce> </div> <header class="md-header md-header--shadow md-header--lifted" data-md-component=header> <nav class="md-header__inner md-grid" aria-label=Header> <a href=../../.. title="Sake Request" class="md-header__button md-logo" aria-label="Sake Request" data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> Sake Request </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> sake.dataclasses </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media=(prefers-color-scheme) data-md-color-scheme=default data-md-color-primary=indigo data-md-color-accent=indigo aria-label="Switch to light mode" type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title="Switch to light mode" for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg> </label> <input class=md-option data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme=default data-md-color-primary=teal data-md-color-accent=purple aria-label="Switch to dark mode" type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title="Switch to dark mode" for=__palette_2 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg> </label> <input class=md-option data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme=slate data-md-color-primary=black data-md-color-accent=lime aria-label="Switch to system preference" type=radio name=__palette id=__palette_2> <label class="md-header__button md-icon" title="Switch to system preference" for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg> </label> </form> <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=Search placeholder=Search autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </label> <nav class=md-search__options aria-label=Search> <button type=reset class="md-search__icon md-icon" title=Clear aria-label=Clear tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap tabindex=0 data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> Initializing search </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/seqoia-ia/sake_request title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg> </div> <div class=md-source__repository> seqoia-ia/sake_request </div> </a> </div> </nav> <nav class=md-tabs aria-label=Tabs data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=../../.. class=md-tabs__link> Home </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=../ class=md-tabs__link> API reference </a> </li> <li class=md-tabs__item> <a href=../../../contributing/ class=md-tabs__link> Development </a> </li> </ul> </div> </nav> </header> <div class=md-container data-md-component=container> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=Navigation data-md-level=0> <label class=md-nav__title for=__drawer> <a href=../../.. title="Sake Request" class="md-nav__button md-logo" aria-label="Sake Request" data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> Sake Request </label> <div class=md-nav__source> <a href=https://github.com/seqoia-ia/sake_request title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg> </div> <div class=md-source__repository> seqoia-ia/sake_request </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_1> <div class="md-nav__link md-nav__container"> <a href=../../.. class="md-nav__link "> <span class=md-ellipsis> Home </span> </a> <label class="md-nav__link " for=__nav_1 id=__nav_1_label tabindex=0> <span class="md-nav__icon md-icon"></span> </label> </div> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_1_label aria-expanded=false> <label class=md-nav__title for=__nav_1> <span class="md-nav__icon md-icon"></span> Home </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../usage/ class=md-nav__link> <span class=md-ellipsis> Usage </span> </a> </li> <li class=md-nav__item> <a href=../../../changelog/ class=md-nav__link> <span class=md-ellipsis> Changelog </span> </a> </li> <li class=md-nav__item> <a href=../../../credits/ class=md-nav__link> <span class=md-ellipsis> Credits </span> </a> </li> <li class=md-nav__item> <a href=../../../license/ class=md-nav__link> <span class=md-ellipsis> License </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2 checked> <label class=md-nav__link for=__nav_2 id=__nav_2_label tabindex> <span class=md-ellipsis> API reference </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_2_label aria-expanded=true> <label class=md-nav__title for=__nav_2> <span class="md-nav__icon md-icon"></span> API reference </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_1 checked> <label class=md-nav__link for=__nav_2_1 id=__nav_2_1_label tabindex> <span class=md-ellipsis> Sake Request </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_2_1_label aria-expanded=true> <label class=md-nav__title for=__nav_2_1> <span class="md-nav__icon md-icon"></span> Sake Request </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--active md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_1_1 checked> <div class="md-nav__link md-nav__container"> <a href=../ class="md-nav__link "> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> sake </span> </a> <label class="md-nav__link " for=__nav_2_1_1 id=__nav_2_1_1_label tabindex=0> <span class="md-nav__icon md-icon"></span> </label> </div> <nav class=md-nav data-md-level=3 aria-labelledby=__nav_2_1_1_label aria-expanded=true> <label class=md-nav__title for=__nav_2_1_1> <span class="md-nav__icon md-icon"></span> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> sake </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../abc/ class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> abc </span> </a> </li> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> dataclasses </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> dataclasses </span> </a> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#sake.dataclasses.asdict class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;asdict </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.astuple class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;astuple </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.field class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;field </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.fields class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;fields </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.is_dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;is_dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.make_dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;make_dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.replace class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;replace </span> </a> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../obj/ class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> obj </span> </a> </li> <li class=md-nav__item> <a href=../utils/ class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> utils </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_3> <label class=md-nav__link for=__nav_3 id=__nav_3_label tabindex=0> <span class=md-ellipsis> Development </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_3_label aria-expanded=false> <label class=md-nav__title for=__nav_3> <span class="md-nav__icon md-icon"></span> Development </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../contributing/ class=md-nav__link> <span class=md-ellipsis> Contributing </span> </a> </li> <li class=md-nav__item> <a href=../../../code_of_conduct/ class=md-nav__link> <span class=md-ellipsis> Code of Conduct </span> </a> </li> <li class=md-nav__item> <a href=../../../coverage/ class=md-nav__link> <span class=md-ellipsis> Coverage report </span> </a> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#sake.dataclasses.asdict class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;asdict </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.astuple class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;astuple </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.field class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;field </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.fields class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;fields </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.is_dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;is_dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.make_dataclass class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;make_dataclass </span> </a> </li> <li class=md-nav__item> <a href=#sake.dataclasses.replace class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;replace </span> </a> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <a href=https://github.com/seqoia-ia/sake_request/edit/main/src/sake/dataclasses.py title="Edit this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg> </a> <a href=https://github.com/seqoia-ia/sake_request/raw/main/src/sake/dataclasses.py title="View source of this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg> </a> <div class="doc doc-object doc-module"> <h1 id=sake.dataclasses class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-module"></code> <span class="doc doc-object-name doc-module-name">dataclasses</span> <a href=#sake.dataclasses class=headerlink title="Permanent link">&para;</a></h1> <div class="doc doc-contents first"> <p><span class=doc-section-title>Modules:</span></p> <ul> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.abc" href="../abc/#sake.abc">abc</a></code></b> – <div class=doc-md-description> <p>Abstract Base Classes (ABCs) according to PEP 3119.</p> </div> </li> </ul> <p><span class=doc-section-title>Functions:</span></p> <ul> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.asdict" href="#sake.dataclasses.asdict">asdict</a></code></b> – <div class=doc-md-description> <p>Return the fields of a dataclass instance as a new dictionary mapping</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.astuple" href="#sake.dataclasses.astuple">astuple</a></code></b> – <div class=doc-md-description> <p>Return the fields of a dataclass instance as a new tuple of field values.</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.dataclass" href="#sake.dataclasses.dataclass">dataclass</a></code></b> – <div class=doc-md-description> <p>Returns the same class as was passed in, with dunder methods</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.field" href="#sake.dataclasses.field">field</a></code></b> – <div class=doc-md-description> <p>Return an object to identify dataclass fields.</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.fields" href="#sake.dataclasses.fields">fields</a></code></b> – <div class=doc-md-description> <p>Return a tuple describing the fields of this dataclass.</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.is_dataclass" href="#sake.dataclasses.is_dataclass">is_dataclass</a></code></b> – <div class=doc-md-description> <p>Returns True if obj is a dataclass or an instance of a</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.make_dataclass" href="#sake.dataclasses.make_dataclass">make_dataclass</a></code></b> – <div class=doc-md-description> <p>Return a new dynamically created dataclass.</p> </div> </li> <li class="doc-section-item field-body"> <b><code><a class="autorefs autorefs-internal" title="sake.dataclasses.replace" href="#sake.dataclasses.replace">replace</a></code></b> – <div class=doc-md-description> <p>Return a new object replacing specified fields with new values.</p> </div> </li> </ul> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.asdict class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">asdict</span> <a href=#sake.dataclasses.asdict class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>asdict</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>dict_factory</span><span class=o>=</span><span class=n>dict</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the fields of a dataclass instance as a new dictionary mapping field names to field values.</p> <p>Example usage:</p> <p>@dataclass class C: x: int y: int</p> <p>c = C(1, 2) assert asdict(c) == {'x': 1, 'y': 2}</p> <p>If given, 'dict_factory' will be used instead of built-in dict. The function applies recursively to field values that are dataclass instances. This will also look into built-in containers: tuples, lists, and dicts.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1245</span>
+<span class=normal>1246</span>
+<span class=normal>1247</span>
+<span class=normal>1248</span>
+<span class=normal>1249</span>
+<span class=normal>1250</span>
+<span class=normal>1251</span>
+<span class=normal>1252</span>
+<span class=normal>1253</span>
+<span class=normal>1254</span>
+<span class=normal>1255</span>
+<span class=normal>1256</span>
+<span class=normal>1257</span>
+<span class=normal>1258</span>
+<span class=normal>1259</span>
+<span class=normal>1260</span>
+<span class=normal>1261</span>
+<span class=normal>1262</span>
+<span class=normal>1263</span>
+<span class=normal>1264</span>
+<span class=normal>1265</span>
+<span class=normal>1266</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>asdict</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>dict_factory</span><span class=o>=</span><span class=nb>dict</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the fields of a dataclass instance as a new dictionary mapping</span>
+<span class=sd>    field names to field values.</span>
+
+<span class=sd>    Example usage:</span>
+
+<span class=sd>      @dataclass</span>
+<span class=sd>      class C:</span>
+<span class=sd>          x: int</span>
+<span class=sd>          y: int</span>
+
+<span class=sd>      c = C(1, 2)</span>
+<span class=sd>      assert asdict(c) == {&#39;x&#39;: 1, &#39;y&#39;: 2}</span>
+
+<span class=sd>    If given, &#39;dict_factory&#39; will be used instead of built-in dict.</span>
+<span class=sd>    The function applies recursively to field values that are</span>
+<span class=sd>    dataclass instances. This will also look into built-in containers:</span>
+<span class=sd>    tuples, lists, and dicts.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>_is_dataclass_instance</span><span class=p>(</span><span class=n>obj</span><span class=p>):</span>
+        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s2>&quot;asdict() should be called on dataclass instances&quot;</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>_asdict_inner</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>dict_factory</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.astuple class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">astuple</span> <a href=#sake.dataclasses.astuple class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>astuple</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>tuple_factory</span><span class=o>=</span><span class=n>tuple</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the fields of a dataclass instance as a new tuple of field values.</p> <p>Example usage::</p> <p>@dataclass class C: x: int y: int</p> <p>c = C(1, 2) assert astuple(c) == (1, 2)</p> <p>If given, 'tuple_factory' will be used instead of built-in tuple. The function applies recursively to field values that are dataclass instances. This will also look into built-in containers: tuples, lists, and dicts.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1308</span>
+<span class=normal>1309</span>
+<span class=normal>1310</span>
+<span class=normal>1311</span>
+<span class=normal>1312</span>
+<span class=normal>1313</span>
+<span class=normal>1314</span>
+<span class=normal>1315</span>
+<span class=normal>1316</span>
+<span class=normal>1317</span>
+<span class=normal>1318</span>
+<span class=normal>1319</span>
+<span class=normal>1320</span>
+<span class=normal>1321</span>
+<span class=normal>1322</span>
+<span class=normal>1323</span>
+<span class=normal>1324</span>
+<span class=normal>1325</span>
+<span class=normal>1326</span>
+<span class=normal>1327</span>
+<span class=normal>1328</span>
+<span class=normal>1329</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>astuple</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span> <span class=n>tuple_factory</span><span class=o>=</span><span class=nb>tuple</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the fields of a dataclass instance as a new tuple of field values.</span>
+
+<span class=sd>    Example usage::</span>
+
+<span class=sd>      @dataclass</span>
+<span class=sd>      class C:</span>
+<span class=sd>          x: int</span>
+<span class=sd>          y: int</span>
+
+<span class=sd>    c = C(1, 2)</span>
+<span class=sd>    assert astuple(c) == (1, 2)</span>
+
+<span class=sd>    If given, &#39;tuple_factory&#39; will be used instead of built-in tuple.</span>
+<span class=sd>    The function applies recursively to field values that are</span>
+<span class=sd>    dataclass instances. This will also look into built-in containers:</span>
+<span class=sd>    tuples, lists, and dicts.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>_is_dataclass_instance</span><span class=p>(</span><span class=n>obj</span><span class=p>):</span>
+        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s2>&quot;astuple() should be called on dataclass instances&quot;</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>_astuple_inner</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>tuple_factory</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.dataclass class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">dataclass</span> <a href=#sake.dataclasses.dataclass class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>dataclass</span><span class=p>(</span>
+    <span class=bp>cls</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=o>/</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>eq</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>order</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>unsafe_hash</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>frozen</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>match_args</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>slots</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Returns the same class as was passed in, with dunder methods added based on the fields defined in the class.</p> <p>Examines PEP 526 <strong>annotations</strong> to determine fields.</p> <p>If init is true, an <strong>init</strong>() method is added to the class. If repr is true, a <strong>repr</strong>() method is added. If order is true, rich comparison dunder methods are added. If unsafe_hash is true, a <strong>hash</strong>() method function is added. If frozen is true, fields may not be assigned to after instance creation. If match_args is true, the <strong>match_args</strong> tuple is added. If kw_only is true, then by default all fields are keyword-only. If slots is true, an <strong>slots</strong> attribute is added.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1174</span>
+<span class=normal>1175</span>
+<span class=normal>1176</span>
+<span class=normal>1177</span>
+<span class=normal>1178</span>
+<span class=normal>1179</span>
+<span class=normal>1180</span>
+<span class=normal>1181</span>
+<span class=normal>1182</span>
+<span class=normal>1183</span>
+<span class=normal>1184</span>
+<span class=normal>1185</span>
+<span class=normal>1186</span>
+<span class=normal>1187</span>
+<span class=normal>1188</span>
+<span class=normal>1189</span>
+<span class=normal>1190</span>
+<span class=normal>1191</span>
+<span class=normal>1192</span>
+<span class=normal>1193</span>
+<span class=normal>1194</span>
+<span class=normal>1195</span>
+<span class=normal>1196</span>
+<span class=normal>1197</span>
+<span class=normal>1198</span>
+<span class=normal>1199</span>
+<span class=normal>1200</span>
+<span class=normal>1201</span>
+<span class=normal>1202</span>
+<span class=normal>1203</span>
+<span class=normal>1204</span>
+<span class=normal>1205</span>
+<span class=normal>1206</span>
+<span class=normal>1207</span>
+<span class=normal>1208</span>
+<span class=normal>1209</span>
+<span class=normal>1210</span>
+<span class=normal>1211</span>
+<span class=normal>1212</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>dataclass</span><span class=p>(</span>
+    <span class=bp>cls</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=o>/</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>eq</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>order</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>unsafe_hash</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>frozen</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>match_args</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>slots</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+<span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Returns the same class as was passed in, with dunder methods</span>
+<span class=sd>    added based on the fields defined in the class.</span>
+
+<span class=sd>    Examines PEP 526 __annotations__ to determine fields.</span>
+
+<span class=sd>    If init is true, an __init__() method is added to the class. If</span>
+<span class=sd>    repr is true, a __repr__() method is added. If order is true, rich</span>
+<span class=sd>    comparison dunder methods are added. If unsafe_hash is true, a</span>
+<span class=sd>    __hash__() method function is added. If frozen is true, fields may</span>
+<span class=sd>    not be assigned to after instance creation. If match_args is true,</span>
+<span class=sd>    the __match_args__ tuple is added. If kw_only is true, then by</span>
+<span class=sd>    default all fields are keyword-only. If slots is true, an</span>
+<span class=sd>    __slots__ attribute is added.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>def</span> <span class=nf>wrap</span><span class=p>(</span><span class=bp>cls</span><span class=p>):</span>
+        <span class=k>return</span> <span class=n>_process_class</span><span class=p>(</span><span class=bp>cls</span><span class=p>,</span> <span class=n>init</span><span class=p>,</span> <span class=nb>repr</span><span class=p>,</span> <span class=n>eq</span><span class=p>,</span> <span class=n>order</span><span class=p>,</span> <span class=n>unsafe_hash</span><span class=p>,</span> <span class=n>frozen</span><span class=p>,</span> <span class=n>match_args</span><span class=p>,</span> <span class=n>kw_only</span><span class=p>,</span> <span class=n>slots</span><span class=p>)</span>
+
+    <span class=c1># See if we&#39;re being called as @dataclass or @dataclass().</span>
+    <span class=k>if</span> <span class=bp>cls</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=c1># We&#39;re called with parens.</span>
+        <span class=k>return</span> <span class=n>wrap</span>
+
+    <span class=c1># We&#39;re called as @dataclass without parens.</span>
+    <span class=k>return</span> <span class=n>wrap</span><span class=p>(</span><span class=bp>cls</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.field class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">field</span> <a href=#sake.dataclasses.field class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>field</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>default</span><span class=o>=</span><span class=n><span title="sake.dataclasses.MISSING">MISSING</span></span><span class=p>,</span>
+    <span class=n>default_factory</span><span class=o>=</span><span class=n><span title="sake.dataclasses.MISSING">MISSING</span></span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>hash</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>compare</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=n><span title="sake.dataclasses.MISSING">MISSING</span></span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return an object to identify dataclass fields.</p> <p>default is the default value of the field. default_factory is a 0-argument function called to initialize a field's value. If init is true, the field will be a parameter to the class's <strong>init</strong>() function. If repr is true, the field will be included in the object's repr(). If hash is true, the field will be included in the object's hash(). If compare is true, the field will be used in comparison functions. metadata, if specified, must be a mapping which is stored but not otherwise examined by dataclass. If kw_only is true, the field will become a keyword-only parameter to <strong>init</strong>().</p> <p>It is an error to specify both default and default_factory.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>391</span>
+<span class=normal>392</span>
+<span class=normal>393</span>
+<span class=normal>394</span>
+<span class=normal>395</span>
+<span class=normal>396</span>
+<span class=normal>397</span>
+<span class=normal>398</span>
+<span class=normal>399</span>
+<span class=normal>400</span>
+<span class=normal>401</span>
+<span class=normal>402</span>
+<span class=normal>403</span>
+<span class=normal>404</span>
+<span class=normal>405</span>
+<span class=normal>406</span>
+<span class=normal>407</span>
+<span class=normal>408</span>
+<span class=normal>409</span>
+<span class=normal>410</span>
+<span class=normal>411</span>
+<span class=normal>412</span>
+<span class=normal>413</span>
+<span class=normal>414</span>
+<span class=normal>415</span>
+<span class=normal>416</span>
+<span class=normal>417</span>
+<span class=normal>418</span>
+<span class=normal>419</span>
+<span class=normal>420</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>field</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>default</span><span class=o>=</span><span class=n>MISSING</span><span class=p>,</span>
+    <span class=n>default_factory</span><span class=o>=</span><span class=n>MISSING</span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>hash</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>compare</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=n>MISSING</span><span class=p>,</span>
+<span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return an object to identify dataclass fields.</span>
+
+<span class=sd>    default is the default value of the field.  default_factory is a</span>
+<span class=sd>    0-argument function called to initialize a field&#39;s value.  If init</span>
+<span class=sd>    is true, the field will be a parameter to the class&#39;s __init__()</span>
+<span class=sd>    function.  If repr is true, the field will be included in the</span>
+<span class=sd>    object&#39;s repr().  If hash is true, the field will be included in the</span>
+<span class=sd>    object&#39;s hash().  If compare is true, the field will be used in</span>
+<span class=sd>    comparison functions.  metadata, if specified, must be a mapping</span>
+<span class=sd>    which is stored but not otherwise examined by dataclass.  If kw_only</span>
+<span class=sd>    is true, the field will become a keyword-only parameter to</span>
+<span class=sd>    __init__().</span>
+
+<span class=sd>    It is an error to specify both default and default_factory.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>if</span> <span class=n>default</span> <span class=ow>is</span> <span class=ow>not</span> <span class=n>MISSING</span> <span class=ow>and</span> <span class=n>default_factory</span> <span class=ow>is</span> <span class=ow>not</span> <span class=n>MISSING</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s2>&quot;cannot specify both default and default_factory&quot;</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>Field</span><span class=p>(</span><span class=n>default</span><span class=p>,</span> <span class=n>default_factory</span><span class=p>,</span> <span class=n>init</span><span class=p>,</span> <span class=nb>repr</span><span class=p>,</span> <span class=nb>hash</span><span class=p>,</span> <span class=n>compare</span><span class=p>,</span> <span class=n>metadata</span><span class=p>,</span> <span class=n>kw_only</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.fields class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">fields</span> <a href=#sake.dataclasses.fields class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>fields</span><span class=p>(</span><span class=n>class_or_instance</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a tuple describing the fields of this dataclass.</p> <p>Accepts a dataclass or an instance of one. Tuple elements are of type Field.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1215</span>
+<span class=normal>1216</span>
+<span class=normal>1217</span>
+<span class=normal>1218</span>
+<span class=normal>1219</span>
+<span class=normal>1220</span>
+<span class=normal>1221</span>
+<span class=normal>1222</span>
+<span class=normal>1223</span>
+<span class=normal>1224</span>
+<span class=normal>1225</span>
+<span class=normal>1226</span>
+<span class=normal>1227</span>
+<span class=normal>1228</span>
+<span class=normal>1229</span>
+<span class=normal>1230</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>fields</span><span class=p>(</span><span class=n>class_or_instance</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return a tuple describing the fields of this dataclass.</span>
+
+<span class=sd>    Accepts a dataclass or an instance of one. Tuple elements are of</span>
+<span class=sd>    type Field.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=c1># Might it be worth caching this, per class?</span>
+    <span class=k>try</span><span class=p>:</span>
+        <span class=n>fields</span> <span class=o>=</span> <span class=nb>getattr</span><span class=p>(</span><span class=n>class_or_instance</span><span class=p>,</span> <span class=n>_FIELDS</span><span class=p>)</span>
+    <span class=k>except</span> <span class=ne>AttributeError</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s2>&quot;must be called with a dataclass type or instance&quot;</span><span class=p>)</span> <span class=kn>from</span> <span class=kc>None</span>
+
+    <span class=c1># Exclude pseudo-fields.  Note that fields is sorted by insertion</span>
+    <span class=c1># order, so the order of the tuple is as the fields were defined.</span>
+    <span class=k>return</span> <span class=nb>tuple</span><span class=p>(</span><span class=n>f</span> <span class=k>for</span> <span class=n>f</span> <span class=ow>in</span> <span class=n>fields</span><span class=o>.</span><span class=n>values</span><span class=p>()</span> <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>_field_type</span> <span class=ow>is</span> <span class=n>_FIELD</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.is_dataclass class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">is_dataclass</span> <a href=#sake.dataclasses.is_dataclass class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>is_dataclass</span><span class=p>(</span><span class=n>obj</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Returns True if obj is a dataclass or an instance of a dataclass.</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1238</span>
+<span class=normal>1239</span>
+<span class=normal>1240</span>
+<span class=normal>1241</span>
+<span class=normal>1242</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>is_dataclass</span><span class=p>(</span><span class=n>obj</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Returns True if obj is a dataclass or an instance of a</span>
+<span class=sd>    dataclass.&quot;&quot;&quot;</span>
+    <span class=bp>cls</span> <span class=o>=</span> <span class=n>obj</span> <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=nb>type</span><span class=p>)</span> <span class=ow>and</span> <span class=ow>not</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>GenericAlias</span><span class=p>)</span> <span class=k>else</span> <span class=nb>type</span><span class=p>(</span><span class=n>obj</span><span class=p>)</span>
+    <span class=k>return</span> <span class=nb>hasattr</span><span class=p>(</span><span class=bp>cls</span><span class=p>,</span> <span class=n>_FIELDS</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.make_dataclass class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">make_dataclass</span> <a href=#sake.dataclasses.make_dataclass class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>make_dataclass</span><span class=p>(</span>
+    <span class=n>cls_name</span><span class=p>,</span>
+    <span class=n>fields</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>bases</span><span class=o>=</span><span class=p>(),</span>
+    <span class=n>namespace</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>eq</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>order</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>unsafe_hash</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>frozen</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>match_args</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>slots</span><span class=o>=</span><span class=kc>False</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a new dynamically created dataclass.</p> <p>The dataclass name will be 'cls_name'. 'fields' is an iterable of either (name), (name, type) or (name, type, Field) objects. If type is omitted, use the string 'typing.Any'. Field objects are created by the equivalent of calling 'field(name, type [, Field-info])'.</p> <p>C = make_dataclass('C', ['x', ('y', int), ('z', int, field(init=False))], bases=(Base,))</p> <p>is equivalent to:</p> <p>@dataclass class C(Base): x: 'typing.Any' y: int z: int = field(init=False)</p> <p>For the bases and namespace parameters, see the builtin type() function.</p> <p>The parameters init, repr, eq, order, unsafe_hash, and frozen are passed to dataclass().</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1358</span>
+<span class=normal>1359</span>
+<span class=normal>1360</span>
+<span class=normal>1361</span>
+<span class=normal>1362</span>
+<span class=normal>1363</span>
+<span class=normal>1364</span>
+<span class=normal>1365</span>
+<span class=normal>1366</span>
+<span class=normal>1367</span>
+<span class=normal>1368</span>
+<span class=normal>1369</span>
+<span class=normal>1370</span>
+<span class=normal>1371</span>
+<span class=normal>1372</span>
+<span class=normal>1373</span>
+<span class=normal>1374</span>
+<span class=normal>1375</span>
+<span class=normal>1376</span>
+<span class=normal>1377</span>
+<span class=normal>1378</span>
+<span class=normal>1379</span>
+<span class=normal>1380</span>
+<span class=normal>1381</span>
+<span class=normal>1382</span>
+<span class=normal>1383</span>
+<span class=normal>1384</span>
+<span class=normal>1385</span>
+<span class=normal>1386</span>
+<span class=normal>1387</span>
+<span class=normal>1388</span>
+<span class=normal>1389</span>
+<span class=normal>1390</span>
+<span class=normal>1391</span>
+<span class=normal>1392</span>
+<span class=normal>1393</span>
+<span class=normal>1394</span>
+<span class=normal>1395</span>
+<span class=normal>1396</span>
+<span class=normal>1397</span>
+<span class=normal>1398</span>
+<span class=normal>1399</span>
+<span class=normal>1400</span>
+<span class=normal>1401</span>
+<span class=normal>1402</span>
+<span class=normal>1403</span>
+<span class=normal>1404</span>
+<span class=normal>1405</span>
+<span class=normal>1406</span>
+<span class=normal>1407</span>
+<span class=normal>1408</span>
+<span class=normal>1409</span>
+<span class=normal>1410</span>
+<span class=normal>1411</span>
+<span class=normal>1412</span>
+<span class=normal>1413</span>
+<span class=normal>1414</span>
+<span class=normal>1415</span>
+<span class=normal>1416</span>
+<span class=normal>1417</span>
+<span class=normal>1418</span>
+<span class=normal>1419</span>
+<span class=normal>1420</span>
+<span class=normal>1421</span>
+<span class=normal>1422</span>
+<span class=normal>1423</span>
+<span class=normal>1424</span>
+<span class=normal>1425</span>
+<span class=normal>1426</span>
+<span class=normal>1427</span>
+<span class=normal>1428</span>
+<span class=normal>1429</span>
+<span class=normal>1430</span>
+<span class=normal>1431</span>
+<span class=normal>1432</span>
+<span class=normal>1433</span>
+<span class=normal>1434</span>
+<span class=normal>1435</span>
+<span class=normal>1436</span>
+<span class=normal>1437</span>
+<span class=normal>1438</span>
+<span class=normal>1439</span>
+<span class=normal>1440</span>
+<span class=normal>1441</span>
+<span class=normal>1442</span>
+<span class=normal>1443</span>
+<span class=normal>1444</span>
+<span class=normal>1445</span>
+<span class=normal>1446</span>
+<span class=normal>1447</span>
+<span class=normal>1448</span>
+<span class=normal>1449</span>
+<span class=normal>1450</span>
+<span class=normal>1451</span>
+<span class=normal>1452</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>make_dataclass</span><span class=p>(</span>
+    <span class=n>cls_name</span><span class=p>,</span>
+    <span class=n>fields</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>bases</span><span class=o>=</span><span class=p>(),</span>
+    <span class=n>namespace</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+    <span class=n>init</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=nb>repr</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>eq</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>order</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>unsafe_hash</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>frozen</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>match_args</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+    <span class=n>kw_only</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+    <span class=n>slots</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
+<span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return a new dynamically created dataclass.</span>
+
+<span class=sd>    The dataclass name will be &#39;cls_name&#39;.  &#39;fields&#39; is an iterable</span>
+<span class=sd>    of either (name), (name, type) or (name, type, Field) objects. If type is</span>
+<span class=sd>    omitted, use the string &#39;typing.Any&#39;.  Field objects are created by</span>
+<span class=sd>    the equivalent of calling &#39;field(name, type [, Field-info])&#39;.</span>
+
+<span class=sd>      C = make_dataclass(&#39;C&#39;, [&#39;x&#39;, (&#39;y&#39;, int), (&#39;z&#39;, int, field(init=False))], bases=(Base,))</span>
+
+<span class=sd>    is equivalent to:</span>
+
+<span class=sd>      @dataclass</span>
+<span class=sd>      class C(Base):</span>
+<span class=sd>          x: &#39;typing.Any&#39;</span>
+<span class=sd>          y: int</span>
+<span class=sd>          z: int = field(init=False)</span>
+
+<span class=sd>    For the bases and namespace parameters, see the builtin type() function.</span>
+
+<span class=sd>    The parameters init, repr, eq, order, unsafe_hash, and frozen are passed to</span>
+<span class=sd>    dataclass().</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>if</span> <span class=n>namespace</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>namespace</span> <span class=o>=</span> <span class=p>{}</span>
+
+    <span class=c1># While we&#39;re looking through the field names, validate that they</span>
+    <span class=c1># are identifiers, are not keywords, and not duplicates.</span>
+    <span class=n>seen</span> <span class=o>=</span> <span class=nb>set</span><span class=p>()</span>
+    <span class=n>annotations</span> <span class=o>=</span> <span class=p>{}</span>
+    <span class=n>defaults</span> <span class=o>=</span> <span class=p>{}</span>
+    <span class=k>for</span> <span class=n>item</span> <span class=ow>in</span> <span class=n>fields</span><span class=p>:</span>
+        <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>item</span><span class=p>,</span> <span class=nb>str</span><span class=p>):</span>
+            <span class=n>name</span> <span class=o>=</span> <span class=n>item</span>
+            <span class=n>tp</span> <span class=o>=</span> <span class=s2>&quot;typing.Any&quot;</span>
+        <span class=k>elif</span> <span class=nb>len</span><span class=p>(</span><span class=n>item</span><span class=p>)</span> <span class=o>==</span> <span class=mi>2</span><span class=p>:</span>
+            <span class=p>(</span>
+                <span class=n>name</span><span class=p>,</span>
+                <span class=n>tp</span><span class=p>,</span>
+            <span class=p>)</span> <span class=o>=</span> <span class=n>item</span>
+        <span class=k>elif</span> <span class=nb>len</span><span class=p>(</span><span class=n>item</span><span class=p>)</span> <span class=o>==</span> <span class=mi>3</span><span class=p>:</span>
+            <span class=n>name</span><span class=p>,</span> <span class=n>tp</span><span class=p>,</span> <span class=n>spec</span> <span class=o>=</span> <span class=n>item</span>
+            <span class=n>defaults</span><span class=p>[</span><span class=n>name</span><span class=p>]</span> <span class=o>=</span> <span class=n>spec</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Invalid field: </span><span class=si>{</span><span class=n>item</span><span class=si>!r}</span><span class=s2>&quot;</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=ow>not</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=nb>str</span><span class=p>)</span> <span class=ow>or</span> <span class=ow>not</span> <span class=n>name</span><span class=o>.</span><span class=n>isidentifier</span><span class=p>():</span>
+            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Field names must be valid identifiers: </span><span class=si>{</span><span class=n>name</span><span class=si>!r}</span><span class=s2>&quot;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=n>keyword</span><span class=o>.</span><span class=n>iskeyword</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
+            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Field names must not be keywords: </span><span class=si>{</span><span class=n>name</span><span class=si>!r}</span><span class=s2>&quot;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=n>name</span> <span class=ow>in</span> <span class=n>seen</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Field name duplicated: </span><span class=si>{</span><span class=n>name</span><span class=si>!r}</span><span class=s2>&quot;</span><span class=p>)</span>
+
+        <span class=n>seen</span><span class=o>.</span><span class=n>add</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
+        <span class=n>annotations</span><span class=p>[</span><span class=n>name</span><span class=p>]</span> <span class=o>=</span> <span class=n>tp</span>
+
+    <span class=c1># Update &#39;ns&#39; with the user-supplied namespace plus our calculated values.</span>
+    <span class=k>def</span> <span class=nf>exec_body_callback</span><span class=p>(</span><span class=n>ns</span><span class=p>):</span>
+        <span class=n>ns</span><span class=o>.</span><span class=n>update</span><span class=p>(</span><span class=n>namespace</span><span class=p>)</span>
+        <span class=n>ns</span><span class=o>.</span><span class=n>update</span><span class=p>(</span><span class=n>defaults</span><span class=p>)</span>
+        <span class=n>ns</span><span class=p>[</span><span class=s2>&quot;__annotations__&quot;</span><span class=p>]</span> <span class=o>=</span> <span class=n>annotations</span>
+
+    <span class=c1># We use `types.new_class()` instead of simply `type()` to allow dynamic creation</span>
+    <span class=c1># of generic dataclasses.</span>
+    <span class=bp>cls</span> <span class=o>=</span> <span class=n>types</span><span class=o>.</span><span class=n>new_class</span><span class=p>(</span><span class=n>cls_name</span><span class=p>,</span> <span class=n>bases</span><span class=p>,</span> <span class=p>{},</span> <span class=n>exec_body_callback</span><span class=p>)</span>
+
+    <span class=c1># Apply the normal decorator.</span>
+    <span class=k>return</span> <span class=n>dataclass</span><span class=p>(</span>
+        <span class=bp>cls</span><span class=p>,</span>
+        <span class=n>init</span><span class=o>=</span><span class=n>init</span><span class=p>,</span>
+        <span class=nb>repr</span><span class=o>=</span><span class=nb>repr</span><span class=p>,</span>
+        <span class=n>eq</span><span class=o>=</span><span class=n>eq</span><span class=p>,</span>
+        <span class=n>order</span><span class=o>=</span><span class=n>order</span><span class=p>,</span>
+        <span class=n>unsafe_hash</span><span class=o>=</span><span class=n>unsafe_hash</span><span class=p>,</span>
+        <span class=n>frozen</span><span class=o>=</span><span class=n>frozen</span><span class=p>,</span>
+        <span class=n>match_args</span><span class=o>=</span><span class=n>match_args</span><span class=p>,</span>
+        <span class=n>kw_only</span><span class=o>=</span><span class=n>kw_only</span><span class=p>,</span>
+        <span class=n>slots</span><span class=o>=</span><span class=n>slots</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h2 id=sake.dataclasses.replace class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code> <span class="doc doc-object-name doc-function-name">replace</span> <a href=#sake.dataclasses.replace class=headerlink title="Permanent link">&para;</a></h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>replace</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>/</span><span class=p>,</span> <span class=o>**</span><span class=n>changes</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a new object replacing specified fields with new values.</p> <p>This is especially useful for frozen classes. Example usage:</p> <p>@dataclass(frozen=True) class C: x: int y: int</p> <p>c = C(1, 2) c1 = replace(c, x=3) assert c1.x == 3 and c1.y == 2</p> <details class=quote> <summary>Source code in <code>src/sake/dataclasses.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1455</span>
+<span class=normal>1456</span>
+<span class=normal>1457</span>
+<span class=normal>1458</span>
+<span class=normal>1459</span>
+<span class=normal>1460</span>
+<span class=normal>1461</span>
+<span class=normal>1462</span>
+<span class=normal>1463</span>
+<span class=normal>1464</span>
+<span class=normal>1465</span>
+<span class=normal>1466</span>
+<span class=normal>1467</span>
+<span class=normal>1468</span>
+<span class=normal>1469</span>
+<span class=normal>1470</span>
+<span class=normal>1471</span>
+<span class=normal>1472</span>
+<span class=normal>1473</span>
+<span class=normal>1474</span>
+<span class=normal>1475</span>
+<span class=normal>1476</span>
+<span class=normal>1477</span>
+<span class=normal>1478</span>
+<span class=normal>1479</span>
+<span class=normal>1480</span>
+<span class=normal>1481</span>
+<span class=normal>1482</span>
+<span class=normal>1483</span>
+<span class=normal>1484</span>
+<span class=normal>1485</span>
+<span class=normal>1486</span>
+<span class=normal>1487</span>
+<span class=normal>1488</span>
+<span class=normal>1489</span>
+<span class=normal>1490</span>
+<span class=normal>1491</span>
+<span class=normal>1492</span>
+<span class=normal>1493</span>
+<span class=normal>1494</span>
+<span class=normal>1495</span>
+<span class=normal>1496</span>
+<span class=normal>1497</span>
+<span class=normal>1498</span>
+<span class=normal>1499</span>
+<span class=normal>1500</span>
+<span class=normal>1501</span>
+<span class=normal>1502</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span> <span class=nf>replace</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=o>/</span><span class=p>,</span> <span class=o>**</span><span class=n>changes</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Return a new object replacing specified fields with new values.</span>
+
+<span class=sd>    This is especially useful for frozen classes.  Example usage:</span>
+
+<span class=sd>      @dataclass(frozen=True)</span>
+<span class=sd>      class C:</span>
+<span class=sd>          x: int</span>
+<span class=sd>          y: int</span>
+
+<span class=sd>      c = C(1, 2)</span>
+<span class=sd>      c1 = replace(c, x=3)</span>
+<span class=sd>      assert c1.x == 3 and c1.y == 2</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=c1># We&#39;re going to mutate &#39;changes&#39;, but that&#39;s okay because it&#39;s a</span>
+    <span class=c1># new dict, even if called with &#39;replace(obj, **my_changes)&#39;.</span>
+
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>_is_dataclass_instance</span><span class=p>(</span><span class=n>obj</span><span class=p>):</span>
+        <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s2>&quot;replace() should be called on dataclass instances&quot;</span><span class=p>)</span>
+
+    <span class=c1># It&#39;s an error to have init=False fields in &#39;changes&#39;.</span>
+    <span class=c1># If a field is not in &#39;changes&#39;, read its value from the provided obj.</span>
+
+    <span class=k>for</span> <span class=n>f</span> <span class=ow>in</span> <span class=nb>getattr</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>_FIELDS</span><span class=p>)</span><span class=o>.</span><span class=n>values</span><span class=p>():</span>
+        <span class=c1># Only consider normal fields or InitVars.</span>
+        <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>_field_type</span> <span class=ow>is</span> <span class=n>_FIELD_CLASSVAR</span><span class=p>:</span>
+            <span class=k>continue</span>
+
+        <span class=k>if</span> <span class=ow>not</span> <span class=n>f</span><span class=o>.</span><span class=n>init</span><span class=p>:</span>
+            <span class=c1># Error if this field is specified in changes.</span>
+            <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>name</span> <span class=ow>in</span> <span class=n>changes</span><span class=p>:</span>
+                <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span>
+                    <span class=sa>f</span><span class=s2>&quot;field </span><span class=si>{</span><span class=n>f</span><span class=o>.</span><span class=n>name</span><span class=si>}</span><span class=s2> is declared with &quot;</span> <span class=s2>&quot;init=False, it cannot be specified with &quot;</span> <span class=s2>&quot;replace()&quot;</span>
+                <span class=p>)</span>
+            <span class=k>continue</span>
+
+        <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>name</span> <span class=ow>not</span> <span class=ow>in</span> <span class=n>changes</span><span class=p>:</span>
+            <span class=k>if</span> <span class=n>f</span><span class=o>.</span><span class=n>_field_type</span> <span class=ow>is</span> <span class=n>_FIELD_INITVAR</span> <span class=ow>and</span> <span class=n>f</span><span class=o>.</span><span class=n>default</span> <span class=ow>is</span> <span class=n>MISSING</span><span class=p>:</span>
+                <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;InitVar </span><span class=si>{</span><span class=n>f</span><span class=o>.</span><span class=n>name</span><span class=si>!r}</span><span class=s2> &quot;</span> <span class=s2>&quot;must be specified with replace()&quot;</span><span class=p>)</span>
+            <span class=n>changes</span><span class=p>[</span><span class=n>f</span><span class=o>.</span><span class=n>name</span><span class=p>]</span> <span class=o>=</span> <span class=nb>getattr</span><span class=p>(</span><span class=n>obj</span><span class=p>,</span> <span class=n>f</span><span class=o>.</span><span class=n>name</span><span class=p>)</span>
+
+    <span class=c1># Create the new object, which calls __init__() and</span>
+    <span class=c1># __post_init__() (if defined), using all of the init fields we&#39;ve</span>
+    <span class=c1># added and/or left in &#39;changes&#39;.  If there are values supplied in</span>
+    <span class=c1># changes that aren&#39;t fields, this will correctly raise a</span>
+    <span class=c1># TypeError.</span>
+    <span class=k>return</span> <span class=n>obj</span><span class=o>.</span><span class=vm>__class__</span><span class=p>(</span><span class=o>**</span><span class=n>changes</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> </div> </div> </div> <aside class=md-source-file> <span class=md-source-file__fact> <span class=md-icon title="Last update"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class=timeago datetime=2024-11-21T09:41:50+00:00 locale=en></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-11-21</span> </span> <span class=md-source-file__fact> <span class=md-icon title=Created> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg> </span> <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class=timeago datetime=2024-11-21T09:41:50+00:00 locale=en></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-11-21</span> </span> </aside> <form class=md-feedback name=feedback hidden> <fieldset> <legend class=md-feedback__title> Was this page helpful? </legend> <div class=md-feedback__inner> <div class=md-feedback__list> <button class="md-feedback__icon md-icon" type=submit title="This page was helpful" data-md-value=1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg> </button> <button class="md-feedback__icon md-icon" type=submit title="This page could be improved" data-md-value=0> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg> </button> </div> <div class=md-feedback__note> <div data-md-value=1 hidden> Thanks for your feedback! </div> <div data-md-value=0 hidden> Let us know how we can improve this page. </div> </div> </div> </fieldset> </form> <!-- Giscus --> <!-- https://squidfunk.github.io/mkdocs-material/setup/adding-a-comment-system/#giscus-integration --> <div id=feedback style="display: none;"> <h2 id=__comments>Feedback</h2> <script src=https://giscus.app/client.js data-repo=seqoia-ia/sake_request data-repo-id="REPLACE WITH REPOSITORY NODE ID" data-category=Documentation data-category-id="REPLACE WITH DISCUSSION CATEGORY ID" data-mapping=pathname data-strict=1 data-reactions-enabled=0 data-emit-metadata=0 data-input-position=top data-theme=preferred_color_scheme data-lang=en data-loading=lazy crossorigin=anonymous async>
+    </script> <!-- Synchronize Giscus theme with palette --> <script>
+        var giscus = document.querySelector("script[src*=giscus]")
+
+        // Set palette on initial load
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+            var theme = palette.color.scheme === "slate"
+                ? "transparent_dark"
+                : "light"
+
+            // Instruct Giscus to set theme
+            giscus.setAttribute("data-theme", theme) 
+        }
+
+        // Register event handlers after documented loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            var ref = document.querySelector("[data-md-component=palette]")
+            ref.addEventListener("change", function() {
+                var palette = __md_get("__palette")
+                if (palette && typeof palette.color === "object") {
+                    var theme = palette.color.scheme === "slate"
+                        ? "transparent_dark"
+                        : "light"
+
+                    // Instruct Giscus to change theme
+                    var frame = document.querySelector(".giscus-frame")
+                    frame.contentWindow.postMessage(
+                        { giscus: { setConfig: { theme } } },
+                        "https://giscus.app"
+                    )
+                }
+            })
+        })
+    </script> </div> </article> </div> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> Back to top </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=Footer> <a href=../abc/ class="md-footer__link md-footer__link--prev" aria-label='Previous: <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> abc'> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> Previous </span> <div class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> abc </div> </div> </a> <a href=../obj/ class="md-footer__link md-footer__link--next" aria-label='Next: <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> obj'> <div class=md-footer__title> <span class=md-footer__direction> Next </span> <div class=md-ellipsis> <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> obj </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2024 Pierre Marijon </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://github.com/pierre.marijon target=_blank rel=noopener title=github.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 496 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg> </a> <a href=https://gitter.im/sake_request/community target=_blank rel=noopener title=gitter.im class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 384 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M66.4 322.5H16V0h50.4zM166.9 76.1h-50.4V512h50.4zm100.6 0h-50.4V512h50.4zM368 76h-50.4v247H368z"/></svg> </a> <a href=https://pypi.org/project/sake/ target=_blank rel=noopener title=pypi.org class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script> <script src=../../../assets/javascripts/bundle.83f73b43.min.js></script> <script src=../../../assets/_markdown_exec_pyodide.js></script> <script src=../../../js/timeago.min.js></script> <script src=../../../js/timeago_mkdocs_material.js></script> <script src=../../../js/feedback.js></script> </body> </html>
