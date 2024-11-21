@@ -8,4 +8,4 @@ A set of utils to interogate file produce by [variantplaner](https://github.com/
 pip install git+https://github.com/natir/variantplaner_request
 ```
 
-For usage check
+You could check [usage page](https://natir.github.io/variantplaner_request/usage/) for example

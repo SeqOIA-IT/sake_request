@@ -54,14 +54,13 @@ df = variantplaner_db.get_variant_of_prescription("AAAA", "germline")
 
 DataFrame contains all variants(id, chr, pos, …) and genotype (gt, ad, …) information of prescription AAAA in germline dataset.
 
-## Get variants with a specific annotations
+## Get variants from an annotations
 
 ```
-df = polars.read_parquet(variantplaner_db.annotations_path / "clinvar" / "20241103" / "10.parquet")
-df = df.filter(polars.col("CLNSIG") == "pathogenic")
-
-df = variantplaner_db.add_variants(df, "germline")
+df = variantplaner_db.get_annotations("clinvar", "20241103", "germline")
 ```
+
+DataFrame contains all variants(id, chr, pos, …) and annotations information. By default columns are rename with annotations name as prefix, add `rename_column=False` in call to change this behavior. If you want just some column use `select_columns` parameter, use original name without prefix.
 
 ## Add genotypes to variants
 
