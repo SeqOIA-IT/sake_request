@@ -22,7 +22,15 @@ variantplaner_db = variantplaner.Variantplaner(variantplaner_path)
 - an object `db` to store duckdb connection
 
 ```
-variantplaner_db = variantplaner.Variantplaner(variantplaner_path, threads=3, activate_tqdm=True, annotations_path="my_annotations")
+variantplaner_db = variantplaner.Variantplaner(
+    # mandatory argument
+    variantplaner_path,
+	# optional argument
+	threads=3,
+	activate_tqdm=True,
+	# overwrite annotations_path
+	annotations_path="my_annotations"
+)
 ```
 
 This `variantplaner_db` object use 3 thread, activate tqdm progress bar, and annotations path are `variantplaner_path / "my_annotations"` instead of default value.
@@ -41,7 +49,12 @@ target_chrs = ["1", "2", "3"]
 target_start = [10_000, 40_232, 80_000]
 target_stop = [199_232, 50_123, 800_000]
 
-df = variantplaner_db.get_intervals("germline", target_chrs, target_start, target_stop)
+df = variantplaner_db.get_intervals(
+    "germline",
+	target_chrs,
+	target_start,
+	target_stop
+)
 ```
 
 You can see `get_intervals` as just a loop of `get_interval`.
@@ -91,7 +104,13 @@ df = variantplaner_db.add_annotations(df, "gnomad", "3.1.2")
 By default all column in annotation are prefixed by annotation name. It's likely that not all columns are of interest to you, use parameter `select_columns` to list columns of interest. Use original name not with prefix.
 
 ```
-df = variantplaner_db.add_annotations(df, "gnomad", "genomes.4.1", rename_column=False, select_columns=["AC"])
+df = variantplaner_db.add_annotations(
+    df,
+	"gnomad",
+	"genomes.4.1",
+	rename_column=False,
+	select_columns=["AC"]
+)
 ```
 
 This call add to `df` a column AC from the gnomad annotations.
