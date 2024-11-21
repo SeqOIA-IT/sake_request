@@ -112,7 +112,7 @@ def test_list2string() -> None:
     variants = variantplaner.get_variant_of_prescription("AAAA", "germline")
     variants = variants.filter(polars.col("dp") > 70)
 
-    clean = utils.list2string(variants, column=["ad"])
+    clean = utils.list2string(variants, columns=["ad"])
 
     assert clean.get_column("ad").sort().to_list() == ["0,119", "40,31", "42,37", "44,35", "49,38", "59,139", "62,105"]
 
@@ -124,7 +124,7 @@ def test_get_list() -> None:
 
     variants = polars.read_parquet(variantplaner.annotations_path / "snpeff" / "4.3t" / "germline" / "10.parquet")  # type: ignore[operator]
 
-    clean = utils.get_list(variants, column=["LOF"], null_value="0")
+    clean = utils.get_list(variants, columns=["LOF"], null_value="0")
 
     assert clean.get_column("LOF").sort().to_list() == [
         "0",
@@ -172,11 +172,11 @@ def test_get_list() -> None:
         },
     )
 
-    clean = utils.get_list(data, column=["AA"])
+    clean = utils.get_list(data, columns=["AA"])
     assert clean.get_column("AA").to_list() == [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
 
-    clean = utils.get_list(data, column=["AA"], index=1)
+    clean = utils.get_list(data, columns=["AA"], index=1)
     assert clean.get_column("AA").to_list() == [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-    clean = utils.get_list(data, column=["AA"], index=2, null_value=10)
+    clean = utils.get_list(data, columns=["AA"], index=2, null_value=10)
     assert clean.get_column("AA").to_list() == [10] * 10

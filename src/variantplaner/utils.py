@@ -41,21 +41,21 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     return data.join(recurrence, on="id", how="left")
 
 
-def list2string(data: polars.DataFrame, *, column: list[str], separator: str = ",") -> polars.DataFrame:
+def list2string(data: polars.DataFrame, *, columns: list[str], separator: str = ",") -> polars.DataFrame:
     """Convert list in string."""
     return data.with_columns(
-        [polars.col(name).cast(polars.List(polars.String)).list.join(separator).alias(name) for name in column],
+        [polars.col(name).cast(polars.List(polars.String)).list.join(separator).alias(name) for name in columns],
     )
 
 
 def get_list(
     data: polars.DataFrame,
     *,
-    column: list[str],
+    columns: list[str],
     index: int = 0,
     null_value: typing.Any = 0,
 ) -> polars.DataFrame:
     """Replace list by value at index or null_value if index is out of bound."""
     return data.with_columns(
-        [polars.col(name).list.get(index, null_on_oob=True).fill_null(null_value).alias(name) for name in column],
+        [polars.col(name).list.get(index, null_on_oob=True).fill_null(null_value).alias(name) for name in columns],
     )
