@@ -97,7 +97,7 @@ def check_types(ctx: Context) -> None:
 def check_api(ctx: Context, *cli_args: str) -> None:
     """Check for API breaking changes."""
     ctx.run(
-        tools.griffe.check("sake", search=["src"], color=True).add_args(*cli_args),
+        tools.griffe.check("variantplaner", search=["src"], color=True).add_args(*cli_args),
         title="Checking for API breaking changes",
         nofail=True,
     )
@@ -123,9 +123,7 @@ def docs(ctx: Context, *cli_args: str, host: str = "127.0.0.1", port: int = 8000
 def docs_deploy(ctx: Context) -> None:
     """Deploy the documentation to GitHub pages."""
     os.environ["DEPLOY"] = "true"
-    with material_insiders() as insiders:
-        if not insiders:
-            ctx.run(lambda: False, title="Not deploying docs without Material for MkDocs Insiders!")
+    with material_insiders():
         ctx.run(tools.mkdocs.gh_deploy(), title="Deploying documentation")
 
 

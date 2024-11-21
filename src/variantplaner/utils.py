@@ -35,7 +35,7 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     - gt: genotype
     """
     recurrence = data.group_by("id").agg(
-        sake_AC=polars.sum("gt"),
+        variantplaner_AC=polars.sum("gt"),
     )
 
     return data.join(recurrence, on="id", how="left")

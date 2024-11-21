@@ -1,15 +1,11 @@
-# Sake Request
+# Variantplaner Request
 
-A set of utils to interogate Seqoia dAta laKE
+A set of utils to interogate file produce by [variantplaner](https://github.com/natir/variantplaner)
 
 ## Installation
 
 ```bash
-pip install sake
+pip install git+https://github.com/natir/variantplaner_request
 ```
 
-With [`uv`](https://docs.astral.sh/uv/):
-
-```bash
-uv tool install sake
-```
+For usage check

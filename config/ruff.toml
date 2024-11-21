@@ -72,7 +72,7 @@ docstring-quotes = "double"
 ban-relative-imports = "all"
 
 [lint.isort]
-known-first-party = ["sake"]
+known-first-party = ["variantplaner"]
 
 [lint.pydocstyle]
 convention = "google"

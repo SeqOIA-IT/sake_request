@@ -10,7 +10,7 @@ Nothing easier!
 Fork and clone the repository, then:
 
 ```bash
-cd sake_request
+cd variantplaner_request
 make setup
 ```
 
@@ -30,8 +30,6 @@ make setup
 > or simply `uv sync`.
 
 You now have the dependencies installed.
-
-You can run the application with `make run sake [ARGS...]`.
 
 Run `make help` to see all the available actions!
 

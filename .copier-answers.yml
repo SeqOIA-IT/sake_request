@@ -1,0 +1,20 @@
+# Changes here will be overwritten by Copier
+_commit: 1.5.3
+_src_path: gh:pawamoy/copier-uv
+author_email: pierre.marijon-ext@aphp.fr
+author_fullname: Pierre Marijon
+author_username: natir
+copyright_date: '2024'
+copyright_holder: Pierre Marijon
+copyright_holder_email: pierre.marijon-ext@aphp.fr
+copyright_license: MIT License
+insiders: false
+project_description: A python package to request file produce by variantplaner
+project_name: variantplaner_request
+python_package_command_line_name: variantplaner_request
+python_package_distribution_name: variantplaner_request
+python_package_import_name: variantplaner_request
+repository_name: variantplaner_request
+repository_namespace: natir
+repository_provider: github.com
+
