@@ -13,16 +13,16 @@ import polars
 __all__ = ["add_id_part", "add_recurrence", "list2string", "get_list"]
 
 
-def add_id_part(data: polars.DataFrame) -> polars.DataFrame:
+def add_id_part(data: polars.DataFrame, number_of_bits: int = 8) -> polars.DataFrame:
     """Compute and add id_part of polars.DataFrame."""
     # it's look like dark magic but it's just bit shift without bit shift operator
     return data.with_columns(
-        id_part=polars.when(polars.col("id") // 9223372036854775808 == 1)
+        id_part=polars.when(polars.col("id") // pow(2, 63) == 1)
         .then(
-            255,
+            pow(2, number_of_bits) - 1,
         )
         .otherwise(
-            polars.col("id") * 2 // 72057594037927936,
+            polars.col("id") * 2 // pow(2, 64 - number_of_bits),
         ),
     )
 

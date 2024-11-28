@@ -75,6 +75,20 @@ df = variantplaner_db.get_annotations("clinvar", "20241103", "germline")
 
 DataFrame contains all variants(id, chr, pos, …) and annotations information. By default columns are rename with annotations name as prefix, add `rename_column=False` in call to change this behavior. If you want just some column use `select_columns` parameter, use original name without prefix.
 
+## Add variants to a dataframe
+
+Your dataframe must contains `id` column (see [variants](#get-variants-from-a-genomic-region)).
+
+```
+df = variantplaner_db.add_variants(df, "germline")
+```
+
+Now `df` store variants imformation:
+- chr: chromosome name
+- pos: position of variant
+- ref: reference sequence
+- alt: alternative sequence
+
 ## Add genotypes to variants
 
 Your dataframe must contains `id` column (see [variants](#get-variants-from-a-genomic-region)).

@@ -70,6 +70,31 @@ def test_id_part() -> None:
         20,
     ]
 
+    ids = utils.add_id_part(ids, 9)
+
+    assert ids.get_column("id_part").to_list() == [
+        35,
+        145,
+        299,
+        353,
+        3,
+        111,
+        332,
+        344,
+        283,
+        320,
+        190,
+        313,
+        21,
+        301,
+        137,
+        40,
+        81,
+        158,
+        364,
+        40,
+    ]
+
 
 def test_recurrence() -> None:
     """Check recurrence."""
