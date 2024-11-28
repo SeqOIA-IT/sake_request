@@ -361,6 +361,9 @@ class Variantplaner:
         """  # noqa: S608 we accept risk of sql inject
 
         for (chrom, *_), _data in iterator:
+            if not (annotation_path / f"{chrom}.parquet").is_file():
+                continue
+
             result = self.db.execute(
                 query,
                 {
