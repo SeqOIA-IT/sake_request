@@ -1,4 +1,4 @@
-"""Define Variantplaner dataclass."""
+"""Define Sake dataclass."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import pathlib
 import sys
 
 if sys.version_info[:2] <= (3, 9):
-    from variantplaner import dataclasses
+    from sake import dataclasses
 else:
     import dataclasses
 
@@ -18,9 +18,9 @@ import polars
 from tqdm.auto import tqdm
 
 # project import
-import variantplaner
+import sake
 
-__all__: list[str] = ["Variantplaner"]
+__all__: list[str] = ["Sake"]
 
 
 DEFAULT_PATH = {
@@ -35,17 +35,17 @@ DEFAULT_PATH = {
 
 
 @dataclasses.dataclass(kw_only=True)
-class Variantplaner:
-    """Class that let user extract variants from variantplaner."""
+class Sake:
+    """Class that let user extract variants from sake."""
 
     # Mandatory member
-    variantplaner_path: pathlib.Path = dataclasses.field(kw_only=False)
+    sake_path: pathlib.Path = dataclasses.field(kw_only=False)
 
     # Optional member
     threads: int | None = dataclasses.field(default=os.cpu_count())
     activate_tqdm: bool | None = dataclasses.field(default=False)
 
-    # Optional member generate from variantplaner_path
+    # Optional member generate from sake_path
     aggregations_path: pathlib.Path | None = None
     annotations_path: pathlib.Path | None = None
     partitions_path: pathlib.Path | None = None
@@ -64,9 +64,9 @@ class Variantplaner:
         self.db.query("SET enable_progress_bar = false;")
         os.environ["POLARS_MAX_THREADS"] = str(self.threads)
 
-        for default_field in DEFAULT_PATH:
-            if self.__getattribute__(default_field) is None:
-                self.__setattr__(default_field, self.variantplaner_path / DEFAULT_PATH[default_field])
+        for key, value in DEFAULT_PATH.items():
+            if self.__getattribute__(key) is None:
+                self.__setattr__(key, self.sake_path / value)
 
     def get_interval(self, target: str, chrom: str, start: int, stop: int) -> polars.DataFrame:
         """Get variants from chromosome between start and stop."""
@@ -270,7 +270,7 @@ class Variantplaner:
 
         Require `id` column in variants value
         """
-        variants = variantplaner.utils.add_id_part(variants)
+        variants = sake.utils.add_id_part(variants)
         path_with_target = pathlib.Path(str(self.partitions_path).format(target=target))
 
         if drop_column is None:

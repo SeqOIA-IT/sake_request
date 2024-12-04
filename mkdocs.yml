@@ -1,10 +1,10 @@
-site_name: "Variantplaner Request"
-site_description: "A set of utils tools to interogate file produce by variantplaner"
-site_url: "https://natir.github.io/variantplaner_request"
-repo_url: "https://github.com/natir/variantplaner_request"
-repo_name: "natir/variantplaner_request"
+site_name: "Sake Request"
+site_description: "A set of utils tools to interogate file produce by sake"
+site_url: "https://natir.github.io/sake_request"
+repo_url: "https://github.com/natir/sake_request"
+repo_name: "natir/sake_request"
 site_dir: "site"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/variantplaner]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/sake]
 copyright: Copyright &copy; 2024 Pierre Marijon
 edit_uri: edit/main/docs/
 
@@ -22,7 +22,7 @@ nav:
   - License: license.md
 # defer to gen-files + literate-nav
 - API reference:
-  - VariantPlaner Request: reference/
+  - Sake Request: reference/
 - Development:
   - Contributing: contributing.md
   - Code of Conduct: code_of_conduct.md

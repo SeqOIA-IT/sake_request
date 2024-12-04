@@ -10,7 +10,7 @@ Nothing easier!
 Fork and clone the repository, then:
 
 ```bash
-cd variantplaner_request
+cd sake_request
 make setup
 ```
 

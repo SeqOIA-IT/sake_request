@@ -1,4 +1,4 @@
-"""Tests suite for `variantplaner_request`."""
+"""Tests suite for `sake_request`."""
 
 from pathlib import Path
 

@@ -10,7 +10,7 @@ import polars
 
 # project import
 
-__all__ = ["add_id_part", "add_recurrence", "list2string", "get_list"]
+__all__ = ["add_id_part", "add_recurrence", "get_list", "list2string"]
 
 
 def add_id_part(data: polars.DataFrame, number_of_bits: int = 8) -> polars.DataFrame:
@@ -35,7 +35,7 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     - gt: genotype
     """
     recurrence = data.group_by("id").agg(
-        variantplaner_AC=polars.sum("gt"),
+        sake_AC=polars.sum("gt"),
     )
 
     return data.join(recurrence, on="id", how="left")

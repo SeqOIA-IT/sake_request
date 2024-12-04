@@ -3,7 +3,7 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
-name = "variantplaner"
+name = "sake"
 description = "A set of utils tools to interogate Seqoia dAta laKE"
 authors = [{name = "Pierre Marijon", email = "pierre.marijon-ext@aphp.fr"}]
 license = {text = "MIT"}
@@ -34,9 +34,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/natir/variantplaner_request"
-Documentation = "https://github.com/natir/variantplaner_request"
-Repository = "https://github.com/natir/variantplaner_request"
+Homepage = "https://github.com/natir/sake_request"
+Documentation = "https://github.com/natir/sake_request"
+Repository = "https://github.com/natir/sake_request"
 
 [tool.pdm]
 version = {source = "scm"}

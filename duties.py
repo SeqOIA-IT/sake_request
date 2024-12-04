@@ -97,7 +97,7 @@ def check_types(ctx: Context) -> None:
 def check_api(ctx: Context, *cli_args: str) -> None:
     """Check for API breaking changes."""
     ctx.run(
-        tools.griffe.check("variantplaner", search=["src"], color=True).add_args(*cli_args),
+        tools.griffe.check("sake", search=["src"], color=True).add_args(*cli_args),
         title="Checking for API breaking changes",
         nofail=True,
     )

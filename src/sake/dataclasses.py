@@ -10,7 +10,7 @@ import keyword
 import functools
 import _thread
 from types import FunctionType, GenericAlias
-from variantplaner import abc
+from sake import abc
 
 
 __all__ = [

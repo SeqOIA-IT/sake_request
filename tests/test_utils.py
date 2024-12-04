@@ -10,7 +10,7 @@ import polars
 import polars.testing
 
 # project import
-from variantplaner import Variantplaner, utils
+from sake import Sake, utils
 
 
 def test_id_part() -> None:
@@ -98,12 +98,12 @@ def test_id_part() -> None:
 
 def test_recurrence() -> None:
     """Check recurrence."""
-    variantplaner_path = pathlib.Path("tests/data")
-    variantplaner = Variantplaner(variantplaner_path)
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
 
-    variants = variantplaner.get_interval("germline", "10", 79257338, 121966721)
-    genotyped = variantplaner.add_genotypes(variants, "germline")
-    recurrence = utils.add_recurrence(genotyped).select("id", "variantplaner_AC").unique("id")
+    variants = sake.get_interval("germline", "10", 79257338, 121966721)
+    genotyped = sake.add_genotypes(variants, "germline")
+    recurrence = utils.add_recurrence(genotyped).select("id", "sake_AC").unique("id")
 
     truth = polars.DataFrame(
         {
@@ -118,11 +118,11 @@ def test_recurrence() -> None:
                 3790995582231773212,
                 3817462055472988165,
             ],
-            "variantplaner_AC": [1, 4, 6, 5, 3, 1, 6, 2, 5],
+            "sake_AC": [1, 4, 6, 5, 3, 1, 6, 2, 5],
         },
         schema={
             "id": polars.UInt64,
-            "variantplaner_AC": polars.Int64,
+            "sake_AC": polars.Int64,
         },
     )
 
@@ -131,10 +131,10 @@ def test_recurrence() -> None:
 
 def test_list2string() -> None:
     """Check list2string."""
-    variantplaner_path = pathlib.Path("tests/data")
-    variantplaner = Variantplaner(variantplaner_path)
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
 
-    variants = variantplaner.get_variant_of_prescription("AAAA", "germline")
+    variants = sake.get_variant_of_prescription("AAAA", "germline")
     variants = variants.filter(polars.col("dp") > 70)
 
     clean = utils.list2string(variants, columns=["ad"])
@@ -144,10 +144,10 @@ def test_list2string() -> None:
 
 def test_get_list() -> None:
     """Check get_list."""
-    variantplaner_path = pathlib.Path("tests/data")
-    variantplaner = Variantplaner(variantplaner_path)
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
 
-    variants = polars.read_parquet(variantplaner.annotations_path / "snpeff" / "4.3t" / "germline" / "10.parquet")  # type: ignore[operator]
+    variants = polars.read_parquet(sake.annotations_path / "snpeff" / "4.3t" / "germline" / "10.parquet")  # type: ignore[operator]
 
     clean = utils.get_list(variants, columns=["LOF"], null_value="0")
 
