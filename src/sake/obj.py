@@ -265,12 +265,13 @@ class Sake:
         *,
         keep_id_part: bool = False,
         drop_column: list[str] | None = None,
+        number_of_bits: int = 8,
     ) -> polars.DataFrame:
         """Add genotype information to variants DataFrame.
 
         Require `id` column in variants value
         """
-        variants = sake.utils.add_id_part(variants)
+        variants = sake.utils.add_id_part(variants, number_of_bits=number_of_bits)
         path_with_target = pathlib.Path(str(self.partitions_path).format(target=target))
 
         if drop_column is None:
