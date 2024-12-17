@@ -30,7 +30,7 @@ DEFAULT_PATH = {
     "prescriptions_path": pathlib.Path("{target}") / "genotypes" / "samples",
     "samples_path": pathlib.Path("samples") / "patients.parquet",
     "transmissions_path": pathlib.Path("{target}") / "genotypes" / "transmissions",
-    "variants_path": pathlib.Path("{target}") / "variants.parquet",
+    "variants_path": pathlib.Path("{target}") / "variants",
 }
 
 
@@ -86,7 +86,7 @@ class Sake:
         return self.db.execute(
             query,
             {
-                "path": str(self.variants_path).format(target=target),
+                "path": sake.utils.fix_variants_path(self.variants_path, target, chrom),  # type: ignore[arg-type]
                 "chrom": chrom,
                 "start": start,
                 "stop": stop,
@@ -95,33 +95,12 @@ class Sake:
 
     def get_intervals(self, target: str, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
         """Get variants in multiple intervals."""
-        query = """
-        select
-            v.id, v.chr, v.pos, v.ref, v.alt
-        from
-            read_parquet($path) as v
-        where
-            v.chr == $chrom
-        and
-            v.pos > $start
-        and
-            v.pos < $stop
-        """
-
         all_variants = []
         iterator = tqdm(zip(chroms, zip(starts, stops))) if self.activate_tqdm else zip(chroms, zip(starts, stops))
 
         for chrom, (start, stop) in iterator:
             all_variants.append(
-                self.db.execute(
-                    query,
-                    {
-                        "path": str(self.variants_path).format(target=target),
-                        "chrom": chrom,
-                        "start": start,
-                        "stop": stop,
-                    },
-                ).pl(),
+                self.get_interval(target, chrom, start, stop),
             )
 
         return polars.concat(all_variants)
@@ -145,7 +124,7 @@ class Sake:
                 "sample_path": str(
                     pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{prescription}.parquet",
                 ),
-                "variant_path": str(self.variants_path).format(target=target),
+                "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
             },
         ).pl()
 
@@ -173,7 +152,7 @@ class Sake:
                         "sample_path": str(
                             pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{pid}.parquet",
                         ),
-                        "variant_path": str(self.variants_path).format(target=target),
+                        "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
                     },
                 ).pl(),
             )
@@ -223,7 +202,7 @@ class Sake:
                     "annotation_path": str(
                         self.annotations_path / f"{name}" / f"{version}" / f"{chrom}.parquet",  # type: ignore[operator]
                     ),
-                    "variant_path": str(self.variants_path).format(target=target),
+                    "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
                 },
             ).pl()
 
@@ -254,7 +233,7 @@ class Sake:
         return self.db.execute(
             query,
             {
-                "path": str(self.variants_path).format(target=target),
+                "path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
             },
         ).pl()
 

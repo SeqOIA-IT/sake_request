@@ -508,7 +508,7 @@ def test_default_value() -> None:
     assert database.prescriptions_path == sake_path / "{target}" / "genotypes" / "samples"
     assert database.samples_path == sake_path / "samples" / "patients.parquet"
     assert database.transmissions_path == sake_path / "{target}" / "genotypes" / "transmissions"
-    assert database.variants_path == sake_path / "{target}" / "variants.parquet"
+    assert database.variants_path == sake_path / "{target}" / "variants"
 
 
 def test_set_value() -> None:

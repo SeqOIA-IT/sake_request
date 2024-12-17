@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 # std import
+import pathlib
 import typing
 
 # 3rd party import
@@ -59,3 +60,12 @@ def get_list(
     return data.with_columns(
         [polars.col(name).list.get(index, null_on_oob=True).fill_null(null_value).alias(name) for name in columns],
     )
+
+
+def fix_variants_path(path: pathlib.Path, target: str, chrom: str | None = None) -> str:
+    """Fix variants path to match if variants are split or not."""
+    if chrom is None and pathlib.Path(str(path).format(target=target)).is_dir():
+        return str(path).format(target=target) + "/*.parquet"
+    if pathlib.Path(str(path).format(target=target)).is_dir():
+        return str(path).format(target=target) + f"/{chrom}.parquet"
+    return str(path.with_suffix(".parquet")).format(target=target)
