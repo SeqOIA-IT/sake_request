@@ -96,7 +96,8 @@ class Sake:
     def get_intervals(self, target: str, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
         """Get variants in multiple intervals."""
         all_variants = []
-        iterator = tqdm(zip(chroms, zip(starts, stops))) if self.activate_tqdm else zip(chroms, zip(starts, stops))
+        minimal_length = min(len(chroms), min(len(starts), len(stops)))
+        iterator = tqdm(zip(chroms, zip(starts, stops)), total=minimal_length) if self.activate_tqdm else zip(chroms, zip(starts, stops))
 
         for chrom, (start, stop) in iterator:
             all_variants.append(
