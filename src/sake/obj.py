@@ -68,6 +68,22 @@ class Sake:
             if self.__getattribute__(key) is None:
                 self.__setattr__(key, self.sake_path / value)
 
+    def all_variants(self, target: str) -> polars.DataFrame:
+        """Get all variants of a target in present in Sake."""
+        query = """
+        select
+            v.id, v.chr, v.pos, v.ref, v.alt
+        from
+            read_parquet($path) as v
+        """
+
+        return self.db.execute(
+            query,
+            {
+                "path": sake.utils.fix_variants_path(self.variants_path, target, None),  # type: ignore[arg-type]
+            },
+        ).pl()
+
     def get_interval(self, target: str, chrom: str, start: int, stop: int) -> polars.DataFrame:
         """Get variants from chromosome between start and stop."""
         query = """
@@ -96,8 +112,12 @@ class Sake:
     def get_intervals(self, target: str, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
         """Get variants in multiple intervals."""
         all_variants = []
-        minimal_length = min(len(chroms), min(len(starts), len(stops)))
-        iterator = tqdm(zip(chroms, zip(starts, stops)), total=minimal_length) if self.activate_tqdm else zip(chroms, zip(starts, stops))
+        minimal_length = min(len(chroms), len(starts), len(stops))
+        iterator = (
+            tqdm(zip(chroms, zip(starts, stops)), total=minimal_length)
+            if self.activate_tqdm
+            else zip(chroms, zip(starts, stops))
+        )
 
         for chrom, (start, stop) in iterator:
             all_variants.append(

@@ -11,7 +11,7 @@ import polars
 
 # project import
 
-__all__ = ["add_id_part", "add_recurrence", "get_list", "list2string"]
+__all__ = ["add_id_part", "add_recurrence", "fix_variants_path", "get_list", "list2string"]
 
 
 def add_id_part(data: polars.DataFrame, number_of_bits: int = 8) -> polars.DataFrame:
