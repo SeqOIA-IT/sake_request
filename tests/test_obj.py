@@ -703,6 +703,7 @@ def test_add_samples_info() -> None:
 
     variants = sake.get_interval("germline", "X", 47115191, 99009863)
     genotyped = sake.add_genotypes(variants, "germline")
+
     samples_info = sake.add_sample_info(genotyped)
 
     truth = TRUTH.drop(

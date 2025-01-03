@@ -130,7 +130,7 @@ class Sake:
         """Get all variants of a prescription."""
         query = """
         select
-            v.*, g.*
+            v.chr, v.pos, v.ref, v.alt, g.*
         from
             read_parquet($sample_path) as g
         join
@@ -153,7 +153,7 @@ class Sake:
         """Get all variants of multiple prescriptions."""
         query = """
         select
-            v.*, g.*
+            v.chr, v.pos, v.ref, v.alt, g.*
         from
             read_parquet($sample_path) as g
         join
@@ -395,7 +395,11 @@ class Sake:
         """
         # sampless_path are set in __post_init__
         schema = polars.read_parquet_schema(self.samples_path)  # type: ignore[arg-type]
-        columns = ",".join([f"s.{col}" for col in schema if select_columns is None or col in select_columns])
+
+        if select_columns is None:
+            select_columns = [col for col in schema if col != "sample"]
+
+        columns = ",".join([f"s.{col}" for col in schema if col in select_columns])
 
         query = f"""
         select
@@ -425,30 +429,32 @@ class Sake:
         """
         all_transmissions = []
 
+        input_columns = ",".join([f"v.{col}" for col in variants.schema if col != "id"])
+
         iterator = (
             tqdm(variants.group_by(["pid_crc"]), total=variants.get_column("pid_crc").unique().len())
             if self.activate_tqdm
             else variants.group_by(["pid_crc"])
         )
 
+        query = f"""
+        select
+            {input_columns}, t.*
+        from
+            _data as v
+        left join
+            read_parquet($path) as t
+        on
+            v.id == t.id
+        where
+            v.kindex == True
+        """  # noqa: S608 we accept risk of sql inject
+
         for (pid_crc, *_), _data in iterator:
             path = pathlib.Path(str(self.transmissions_path).format(target="germline")) / f"{pid_crc}.parquet"
 
             if not path.is_file():
                 continue
-
-            query = """
-            select
-                v.*, t.*
-            from
-                _data as v
-            left join
-                read_parquet($path) as t
-            on
-                v.id == t.id
-            where
-                v.kindex == True
-            """
 
             result = (
                 self.db.execute(
