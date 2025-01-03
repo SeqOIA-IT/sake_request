@@ -542,6 +542,18 @@ def test_set_value() -> None:
     assert database.variants_path == sake_path / "other"
 
 
+def test_get_all() -> None:
+    """Check all variants."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path)
+
+    result = sake.all_variants("germline")
+
+    truth = polars.read_parquet("tests/data/germline/variants.parquet")
+
+    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
+
+
 def test_get_interval() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")
