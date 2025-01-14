@@ -34,9 +34,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/natir/sake_request"
-Documentation = "https://github.com/natir/sake_request"
-Repository = "https://github.com/natir/sake_request"
+Homepage = "https://seqoia-it.github.io/sake_request"
+Documentation = "https://seqoia-it.github.io/sake_request"
+Changelog = "https://seqoia-it.github.io/sake_request/changelog"
+Repository = "https://github.com/SeqOIA-IT/sake_request"
+Issues = "https://github.com/SeqOIA-IT/sake_request/issues"
 
 [tool.pdm]
 version = {source = "scm"}

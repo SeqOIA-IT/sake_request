@@ -1,8 +1,8 @@
 site_name: "Sake Request"
 site_description: "A set of utils tools to interogate file produce by sake"
-site_url: "https://natir.github.io/sake_request"
-repo_url: "https://github.com/natir/sake_request"
-repo_name: "natir/sake_request"
+site_url: "https://SeqOIA-IT.github.io/sake_request"
+repo_url: "https://github.com/SeqOIA-IT/sake_request"
+repo_name: "SeqOIA-IT/sake_request"
 site_dir: "site"
 watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/sake]
 copyright: Copyright &copy; 2024 Pierre Marijon
