@@ -436,7 +436,7 @@ def _tuple_str(obj_name, fields):
     if not fields:
         return "()"
     # Note the trailing comma, needed if this turns out to be a 1-tuple.
-    return f'({",".join([f"{obj_name}.{f.name}" for f in fields])},)'
+    return f"({','.join([f'{obj_name}.{f.name}' for f in fields])},)"
 
 
 def _create_fn(name, args, body, *, globals=None, locals=None, return_type=MISSING):
@@ -484,7 +484,7 @@ def _field_init(f, frozen, globals, self_name, slots):
             # This field has a default factory.  If a parameter is
             # given, use it.  If not, call the factory.
             globals[default_name] = f.default_factory
-            value = f"{default_name}() " f"if {f.name} is _HAS_DEFAULT_FACTORY " f"else {f.name}"
+            value = f"{default_name}() if {f.name} is _HAS_DEFAULT_FACTORY else {f.name}"
         else:
             # This is a field that's not in the __init__ params, but
             # has a default factory function.  It needs to be
@@ -567,7 +567,7 @@ def _init_fn(fields, std_fields, kw_only_fields, frozen, has_post_init, self_nam
             if not (f.default is MISSING and f.default_factory is MISSING):
                 seen_default = True
             elif seen_default:
-                raise TypeError(f"non-default argument {f.name!r} " "follows default argument")
+                raise TypeError(f"non-default argument {f.name!r} follows default argument")
 
     locals = {f"_type_{f.name}": f.type for f in fields}
     locals.update(
@@ -813,7 +813,7 @@ def _get_field(cls, a_name, a_type, default_kw_only):
     # Special restrictions for ClassVar and InitVar.
     if f._field_type in (_FIELD_CLASSVAR, _FIELD_INITVAR):
         if f.default_factory is not MISSING:
-            raise TypeError(f"field {f.name} cannot have a " "default factory")
+            raise TypeError(f"field {f.name} cannot have a default factory")
         # Should I check for other field settings? default_factory
         # seems the most serious to check for.  Maybe add others.  For
         # example, how about init=False (or really,
@@ -830,13 +830,11 @@ def _get_field(cls, a_name, a_type, default_kw_only):
         # Make sure kw_only isn't set for ClassVars
         assert f._field_type is _FIELD_CLASSVAR
         if f.kw_only is not MISSING:
-            raise TypeError(f"field {f.name} is a ClassVar but specifies " "kw_only")
+            raise TypeError(f"field {f.name} is a ClassVar but specifies kw_only")
 
     # For real fields, disallow mutable defaults for known types.
     if f._field_type is _FIELD and isinstance(f.default, (list, dict, set)):
-        raise ValueError(
-            f"mutable default {type(f.default)} for field " f"{f.name} is not allowed: use default_factory"
-        )
+        raise ValueError(f"mutable default {type(f.default)} for field {f.name} is not allowed: use default_factory")
 
     return f
 
@@ -876,7 +874,7 @@ def _hash_add(cls, fields, globals):
 
 def _hash_exception(cls, fields, globals):
     # Raise an exception.
-    raise TypeError(f"Cannot overwrite attribute __hash__ " f"in class {cls.__name__}")
+    raise TypeError(f"Cannot overwrite attribute __hash__ in class {cls.__name__}")
 
 
 #
@@ -975,7 +973,7 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen, match_args, 
             # Switch the default to kw_only=True, and ignore this
             # annotation: it's not a real field.
             if KW_ONLY_seen:
-                raise TypeError(f"{name!r} is KW_ONLY, but KW_ONLY " "has already been specified")
+                raise TypeError(f"{name!r} is KW_ONLY, but KW_ONLY has already been specified")
             KW_ONLY_seen = True
             kw_only = True
         else:
@@ -1010,11 +1008,11 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen, match_args, 
     if has_dataclass_bases:
         # Raise an exception if any of our bases are frozen, but we're not.
         if any_frozen_base and not frozen:
-            raise TypeError("cannot inherit non-frozen dataclass from a " "frozen one")
+            raise TypeError("cannot inherit non-frozen dataclass from a frozen one")
 
         # Raise an exception if we're frozen, but none of our bases are.
         if not any_frozen_base and frozen:
-            raise TypeError("cannot inherit frozen dataclass from a " "non-frozen one")
+            raise TypeError("cannot inherit frozen dataclass from a non-frozen one")
 
     # Remember all of the fields on our class (including bases).  This
     # also marks this class as being a dataclass.
@@ -1098,7 +1096,7 @@ def _process_class(cls, init, repr, eq, order, unsafe_hash, frozen, match_args, 
     if frozen:
         for fn in _frozen_get_del_attr(cls, field_list, globals):
             if _set_new_attribute(cls, fn.__name__, fn):
-                raise TypeError(f"Cannot overwrite attribute {fn.__name__} " f"in class {cls.__name__}")
+                raise TypeError(f"Cannot overwrite attribute {fn.__name__} in class {cls.__name__}")
 
     # Decide if/how we're going to create a hash function.
     hash_action = _hash_action[bool(unsafe_hash), bool(eq), bool(frozen), has_explicit_hash]
@@ -1484,14 +1482,12 @@ def replace(obj, /, **changes):
         if not f.init:
             # Error if this field is specified in changes.
             if f.name in changes:
-                raise ValueError(
-                    f"field {f.name} is declared with " "init=False, it cannot be specified with " "replace()"
-                )
+                raise ValueError(f"field {f.name} is declared with init=False, it cannot be specified with replace()")
             continue
 
         if f.name not in changes:
             if f._field_type is _FIELD_INITVAR and f.default is MISSING:
-                raise ValueError(f"InitVar {f.name!r} " "must be specified with replace()")
+                raise ValueError(f"InitVar {f.name!r} must be specified with replace()")
             changes[f.name] = getattr(obj, f.name)
 
     # Create the new object, which calls __init__() and
