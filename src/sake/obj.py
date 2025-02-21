@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 # std import
+import multiprocessing
 import os
 import pathlib
 import sys
@@ -62,6 +63,7 @@ class Sake:
             ":memory:",
         )
         self.db.query("SET enable_progress_bar = false;")
+        self.db.query(f"SET threads TO {self.threads};")
         os.environ["POLARS_MAX_THREADS"] = str(self.threads)
 
         for key, value in DEFAULT_PATH.items():
@@ -266,6 +268,7 @@ class Sake:
         keep_id_part: bool = False,
         drop_column: list[str] | None = None,
         number_of_bits: int = 8,
+        read_threads: int = 1,
     ) -> polars.DataFrame:
         """Add genotype information to variants DataFrame.
 
@@ -280,47 +283,27 @@ class Sake:
         if not keep_id_part:
             drop_column.append("id_part")
 
-        all_genotypes = []
+        all_genotypes: list[polars.DataFrame | None] = []
         iterator = (
             tqdm(variants.group_by(["id_part"]), total=variants.get_column("id_part").unique().len())
             if self.activate_tqdm
             else variants.group_by(["id_part"])
         )
 
-        for (id_part, *_), _data in iterator:
-            part_path = path_with_target / f"id_part={id_part}/0.parquet"
+        query = sake.utils.GenotypeQuery(self.db, path_with_target, drop_column)
 
-            if not part_path.is_file():
-                continue
+        if read_threads == 1:
+            all_genotypes = list(map(query, iterator))
+        else:
+            duckdb_threads = self.threads / read_threads  # type: ignore[operator]
+            self.db.query(f"SET threads TO {duckdb_threads};")
 
-            query = """
-            select
-                v.*, g.sample, g.gt, g.ad, g.dp, g.gq
-            from
-                _data as v
-            left join
-                read_parquet($path) as g
-            on
-                v.id == g.id
-            """
+            with multiprocessing.Pool(processes=read_threads) as pool:
+                all_genotypes = list(pool.imap(query, iterator))
 
-            result = (
-                self.db.execute(
-                    query,
-                    {
-                        "path": str(part_path),
-                    },
-                )
-                .pl()
-                .with_columns(
-                    ad=polars.col("ad").cast(polars.List(polars.String)).list.join(","),
-                )
-                .drop(drop_column)
-            )
+            self.db.query(f"SET threads TO {self.threads}")
 
-            all_genotypes.append(result)
-
-        return polars.concat(all_genotypes)
+        return polars.concat([df for df in all_genotypes if df is not None])
 
     def add_annotations(
         self,
