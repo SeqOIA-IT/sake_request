@@ -290,15 +290,15 @@ class Sake:
             else variants.group_by(["id_part"])
         )
 
-        query = sake.utils.GenotypeQuery(self.db, path_with_target, drop_column)
-
         if read_threads == 1:
+            query = sake.utils.GenotypeQuery(self.threads, path_with_target, drop_column)  # type: ignore[arg-type]
             all_genotypes = list(map(query, iterator))
         else:
-            duckdb_threads = self.threads / read_threads  # type: ignore[operator]
+            duckdb_threads = self.threads // read_threads  # type: ignore[operator]
+            query = sake.utils.GenotypeQuery(duckdb_threads, path_with_target, drop_column)
             self.db.query(f"SET threads TO {duckdb_threads};")
 
-            with multiprocessing.Pool(processes=read_threads) as pool:
+            with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
                 all_genotypes = list(pool.imap(query, iterator))
 
             self.db.query(f"SET threads TO {self.threads}")

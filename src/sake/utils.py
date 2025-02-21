@@ -6,15 +6,12 @@ from __future__ import annotations
 import pathlib
 import typing
 
+import duckdb
+
 # 3rd party import
 import polars
 
 # project import
-
-if typing.TYPE_CHECKING:
-    # 3rd party import
-    import duckdb
-
 
 __all__ = ["GenotypeQuery", "add_id_part", "add_recurrence", "fix_variants_path", "get_list", "list2string"]
 
@@ -78,14 +75,19 @@ def fix_variants_path(path: pathlib.Path, target: str, chrom: str | None = None)
 
 class GenotypeQuery:
     """Class to run genotype quering."""
-    def __init__(self, db: duckdb.DuckDBPyConnection, prefix: pathlib.Path, drop_column: list[str]):
+
+    def __init__(self, threads: int, prefix: pathlib.Path, drop_column: list[str]):
         """Create genotyping query object."""
-        self.db = db
+        self.threads = threads
         self.prefix = prefix
         self.drop_column = drop_column
 
     def __call__(self, params: tuple[tuple[int, typing.Any], polars.DataFrame]) -> polars.DataFrame | None:
         """Run genotyping of data with information in path."""
+        duckdb_db = duckdb.connect(":memory:")
+        duckdb_db.query("SET enable_progress_bar = false;")
+        duckdb_db.query(f"SET threads TO {self.threads};")
+
         (id_part, *_), _data = params
 
         part_path = self.prefix / f"id_part={id_part}/0.parquet"
@@ -104,7 +106,7 @@ class GenotypeQuery:
         """
 
         return (
-            self.db.execute(
+            duckdb_db.execute(
                 query,
                 {
                     "path": str(part_path),
