@@ -129,6 +129,23 @@ df = sake_db.add_annotations(
 
 This call add to `df` a column AC from the gnomad annotations.
 
+### Special case
+
+Due to some specificity in annotations path, you should add more information in `version``add_annotations` parameter.
+
+For exemple if you want add germline snpeff annotation you should run:
+```
+df = sake_db.add_annotations(
+	df,
+	"snpeff", # database_name
+	"germline/4.3t", # database_version
+	select_columns=["effect", "impact"]
+)
+```
+
+In fact `add_annotations` method just concat `sake` path, `database_name` and `database_version`. So to add annotations just check path like `{sake.path}/{database_name}/{database_version}` contains parquet file for each chromosome.
+
+
 ## Add sample information
 
 Your data frame must contains `sample` column (see [genotypes](#add-genotypes-to-variants))
