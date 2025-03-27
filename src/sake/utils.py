@@ -39,7 +39,7 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     """
     recurrence = data.group_by("id").agg(
         sake_AC=polars.sum("gt"),
-        sake_nhomalt=polars.len(),
+        sake_nhomalt=(polars.col("gt") - 1).sum(),
     )
 
     return data.join(recurrence, on="id", how="left")
