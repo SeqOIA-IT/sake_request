@@ -600,6 +600,261 @@ def test_get_intervals() -> None:
     ]
 
 
+def test_get_cnv() -> None:
+    """Check get cnv."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path, "germline")
+
+    result = sake.get_cnv("X", 220002, 156035000, "wisecondor", "DEL")
+    assert result.get_column("chr").to_list() == ["X"]
+    assert result.get_column("start").to_list() == [220002]
+    assert result.get_column("end").to_list() == [156035000]
+    assert result.get_column("tool").to_list() == ["wisecondor"]
+    assert result.get_column("type").to_list() == ["DEL"]
+
+    result = sake.get_cnv("X", 220002, 156035000, "wisecondor", "DEL", exact=False)
+    assert result.get_column("chr").to_list() == ["X"] * 16
+    assert result.get_column("start").sort().to_list() == [
+        250002,
+        1820002,
+        1820002,
+        25175002,
+        32220002,
+        32220002,
+        33180002,
+        48010002,
+        48015002,
+        49570002,
+        56985002,
+        58620002,
+        73600002,
+        73600002,
+        82140002,
+        117360002,
+    ]
+    assert result.get_column("end").sort().to_list() == [
+        1910000,
+        1910000,
+        2780000,
+        26825000,
+        32440000,
+        32440000,
+        39730000,
+        48120000,
+        48130000,
+        49600000,
+        57090000,
+        62405000,
+        73610000,
+        73610000,
+        82160000,
+        117445000,
+    ]
+    assert result.get_column("tool").to_list() == ["wisecondor"] * 16
+    assert result.get_column("type").to_list() == ["DEL"] * 16
+
+
+def test_get_cnv_by_sample() -> None:
+    """Check get cnv by sample."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path, "germline")
+
+    result = sake.get_cnv_by_sample("31E5EE", "wisecondor")
+    assert result.get_column("chr").sort().to_list() == [
+        "1",
+        "10",
+        "12",
+        "15",
+        "15",
+        "15",
+        "15",
+        "15",
+        "15",
+        "18",
+        "18",
+        "18",
+        "18",
+        "18",
+        "2",
+        "2",
+        "4",
+        "6",
+        "6",
+        "7",
+        "9",
+        "9",
+    ]
+    assert result.get_column("start").sort().to_list() == [
+        1905002,
+        1905002,
+        4570002,
+        4570002,
+        7845002,
+        13250002,
+        24105002,
+        24140002,
+        24140002,
+        24195002,
+        24325002,
+        24425002,
+        28590002,
+        28590002,
+        44710002,
+        50480002,
+        81370002,
+        81370002,
+        158600002,
+        161030002,
+        167930002,
+        167930002,
+    ]
+    assert result.get_column("end").sort().to_list() == [
+        1985000,
+        1985000,
+        4860000,
+        4860000,
+        7975000,
+        13365000,
+        24140000,
+        24195000,
+        24195000,
+        24325000,
+        24535000,
+        24535000,
+        28760000,
+        28760000,
+        44865000,
+        50560000,
+        81465000,
+        81465000,
+        158625000,
+        161085000,
+        168200000,
+        168200000,
+    ]
+    assert result.get_column("type").sort().to_list() == [
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DEL",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+        "DUP",
+    ]
+    assert result.get_column("tool").sort().to_list() == ["wisecondor"] * 22
+    assert result.get_column("sample").sort().to_list() == [
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E50",
+        "31E51",
+        "31E51",
+        "31E51",
+        "31E51",
+        "31E51",
+        "31E52",
+        "31E52",
+        "31E52",
+        "31E52",
+        "31E52",
+        "31E52",
+        "31E52",
+        "31E52",
+    ]
+    assert result.get_column("gt").sort().to_list() == [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+    ]
+    assert result.get_column("zs").sort().to_list() == [
+        -86.94726190138441,
+        -85.26031264460592,
+        -73.58155536595004,
+        -73.49114474905434,
+        -50.95450266259022,
+        -45.846312735339446,
+        -44.925688917526934,
+        -38.99657695343938,
+        -19.229216003038786,
+        -9.442566537678365,
+        -5.545238215269585,
+        -5.144791634472006,
+        6.028755486524453,
+        6.463537281517749,
+        7.415727209306482,
+        8.365696063453944,
+        10.769387586443782,
+        31.483716176165192,
+        33.89310022563685,
+        48.95626906157351,
+        102.59442336756443,
+        104.14024508530044,
+    ]
+    assert result.get_column("rt").sort().to_list() == [
+        -8.39,
+        -1.0405,
+        -0.9997,
+        -0.9988,
+        -0.9808,
+        -0.9803,
+        -0.9773,
+        -0.973,
+        -0.9718,
+        -0.9577,
+        -0.9563,
+        -0.9217,
+        0.5418,
+        0.5557,
+        0.5651,
+        0.5657,
+        0.5842,
+        0.593,
+        0.5953,
+        0.6063,
+        0.9493,
+        1.0042,
+    ]
+
+
 def test_pid_variant() -> None:
     """Check get variant of prescription."""
     sake_path = pathlib.Path("tests/data")

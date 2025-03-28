@@ -1,4 +1,4 @@
-"""Test obj submodule."""
+"""Test utils submodule."""
 
 from __future__ import annotations
 

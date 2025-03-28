@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 # project import
 import sake
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     # std import
     import collections
     import pathlib
@@ -38,9 +38,9 @@ def wrap_iterator(
 def fix_variants_path(path: pathlib.Path, chrom: str | None = None) -> str:
     """Fix variants path to match if variants are split or not."""
     if chrom is None and path.is_dir():
-        return str(path / "*.parquett")
+        return str(path / "*.parquet")
     if path.is_dir():
-        return str(path / f"{chrom}.parquett")
+        return str(path / f"{chrom}.parquet")
     return str(path.with_suffix(".parquet"))
 
 

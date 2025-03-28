@@ -93,4 +93,14 @@ QUERY: dict[str, str] = {
     on
         v.id == g.id
     """,
+    "get_cnv": """
+    select
+        v.*
+    from
+        read_parquet($path) as v
+    where
+        v.start {start_comp} $start
+    and
+        v.end {stop_comp} $stop
+    """,
 }
