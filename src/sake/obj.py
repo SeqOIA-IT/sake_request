@@ -78,41 +78,22 @@ class Sake:
 
                 self.__setattr__(key, self.sake_path / str_value)
 
+
     def all_variants(self) -> polars.DataFrame:
         """Get all variants of a target in present in Sake."""
-        query = """
-        select
-            v.id, v.chr, v.pos, v.ref, v.alt
-        from
-            read_parquet($path) as v
-        """
-
         return self.db.execute(
-            query,
+            sake.QUERY["all_variants"],
             {
-                "path": sake._utils.fix_variants_path(self.variants_path, None),  # type: ignore[arg-type]
+                "path": sake._utils.fix_variants_path(self.variants_path, None), # type: ignore[arg-type]
             },
         ).pl()
 
     def get_interval(self, chrom: str, start: int, stop: int) -> polars.DataFrame:
         """Get variants from chromosome between start and stop."""
-        query = """
-        select
-            v.id, v.chr, v.pos, v.ref, v.alt
-        from
-            read_parquet($path) as v
-        where
-            v.chr == $chrom
-        and
-            v.pos > $start
-        and
-            v.pos < $stop
-        """
-
         return self.db.execute(
-            query,
+            sake.QUERY["get_interval"],
             {
-                "path": sake._utils.fix_variants_path(self.variants_path, chrom),  # type: ignore[arg-type]
+                "path": sake._utils.fix_variants_path(self.variants_path, chrom), # type: ignore[arg-type]
                 "chrom": chrom,
                 "start": start,
                 "stop": stop,
@@ -134,19 +115,8 @@ class Sake:
 
     def get_variant_of_prescription(self, prescription: str) -> polars.DataFrame:
         """Get all variants of a prescription."""
-        query = """
-        select
-            v.chr, v.pos, v.ref, v.alt, g.*
-        from
-            read_parquet($sample_path) as g
-        join
-            read_parquet($variant_path) as v
-        on
-            v.id = g.id
-        """
-
         return self.db.execute(
-            query,
+            sake.QUERY["get_variant_of_prescription"],
             {
                 "sample_path": str(
                     self.prescriptions_path / f"{prescription}.parquet",  # type: ignore[operator]
@@ -157,24 +127,13 @@ class Sake:
 
     def get_variant_of_prescriptions(self, prescriptions: list[str]) -> polars.DataFrame:
         """Get all variants of multiple prescriptions."""
-        query = """
-        select
-            v.chr, v.pos, v.ref, v.alt, g.*
-        from
-            read_parquet($sample_path) as g
-        join
-            read_parquet($variant_path) as v
-        on
-            v.id = g.id
-        """
-
         iterator = sake._utils.wrap_iterator(self.activate_tqdm, prescriptions)  # type: ignore[arg-type]
 
         all_variants = []
         for pid in iterator:
             all_variants.append(
                 self.db.execute(
-                    query,
+                    sake.QUERY["get_variant_of_prescription"],
                     {
                         "sample_path": str(self.prescriptions_path / f"{pid}.parquet"),  # type: ignore[operator]
                         "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
@@ -195,7 +154,6 @@ class Sake:
         """Get all variants of an annotations."""
         fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
 
-        print(self.annotations_path / f"{name}" / f"{fix_version}")
         annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]
 
         schema = polars.read_parquet_schema(annotation_path / "1.parquet")
@@ -209,16 +167,7 @@ class Sake:
             del schema["id"]
             columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
-        query = f"""
-        select
-            v.*, {columns}
-        from
-            read_parquet($annotation_path) as a
-        join
-            read_parquet($variant_path) as v
-        on
-            v.id = a.id
-        """  # noqa: S608 we accept risk of sql inject
+        query = sake.QUERY["get_annotations"].format(columns=columns)
 
         all_annotations = []
         iterator = sake._utils.wrap_iterator(self.activate_tqdm, chromosomes_list)  # type: ignore[arg-type]
@@ -227,7 +176,7 @@ class Sake:
                 query,
                 {
                     "annotation_path": str(
-                        self.annotations_path / f"{name}" / f"{fix_version}" / f"{chrom}.parquet",  # type: ignore[operator]
+                        annotation_path / f"{chrom}.parquet",
                     ),
                     "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
                 },
@@ -246,19 +195,8 @@ class Sake:
 
     def add_variants(self, _data: polars.DataFrame) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
-        query = """
-        select
-            v.chr, v.pos, v.ref, v.alt, d.*
-        from
-            read_parquet($path) as v
-        join
-            _data as d
-        on
-            v.id == d.id
-        """
-
         return self.db.execute(
-            query,
+            sake.QUERY["add_variants"],
             {
                 "path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
             },
@@ -337,16 +275,7 @@ class Sake:
             total=variants.get_column("chr").unique().len(),
         )
 
-        query = f"""
-        select
-            v.*, {columns}
-        from
-            _data as v
-        left join
-            read_parquet($path) as a
-        on
-            v.id == a.id
-        """  # noqa: S608 we accept risk of sql inject
+        query = sake.QUERY["add_annotations"].format(columns=columns)
 
         for (chrom, *_), _data in iterator:
             if not (annotation_path / f"{chrom}.parquet").is_file():
@@ -388,16 +317,7 @@ class Sake:
 
         columns = ",".join([f"s.{col}" for col in schema if col in select_columns])
 
-        query = f"""
-        select
-            v.*, {columns}
-        from
-            _variants as v
-        left join
-            read_parquet($path) as s
-        on
-            v.sample == s.sample
-        """  # noqa: S608 we accept risk of sql inject
+        query = sake.QUERY["add_sample_info"].format(columns=columns)
 
         return self.db.execute(
             query,
@@ -424,21 +344,10 @@ class Sake:
             total=variants.get_column("pid_crc").unique().len(),
         )
 
-        query = f"""
-        select
-            {input_columns}, t.*
-        from
-            _data as v
-        left join
-            read_parquet($path) as t
-        on
-            v.id == t.id
-        where
-            v.kindex == True
-        """  # noqa: S608 we accept risk of sql inject
+        query = sake.QUERY["add_transmissions"].format(columns=input_columns)
 
         for (pid_crc, *_), _data in iterator:
-            path = self.transmissions_path / f"{pid_crc}.parquet"   # type: ignore[operator]
+            path = self.transmissions_path / f"{pid_crc}.parquet"  # type: ignore[operator]
 
             if not path.is_file():
                 continue

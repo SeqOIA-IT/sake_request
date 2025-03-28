@@ -11,12 +11,12 @@ import polars
 from tqdm.auto import tqdm
 
 # project import
+import sake
 
 if typing.TYPE_CHECKING:
     # std import
     import collections
     import pathlib
-
 
 __all__ = ["GenotypeQuery", "fix_annotation_version", "fix_variants_path", "wrap_iterator"]
 
@@ -52,6 +52,7 @@ def fix_annotation_version(name: str, version: str, preindication: str) -> str:
 
     return version
 
+
 class GenotypeQuery:
     """Class to run genotype quering."""
 
@@ -73,20 +74,9 @@ class GenotypeQuery:
         if not part_path.is_file():
             return None
 
-        query = """
-        select
-            v.*, g.sample, g.gt, g.ad, g.dp, g.gq
-        from
-            _data as v
-        left join
-            read_parquet($path) as g
-        on
-            v.id == g.id
-        """
-
         return (
             duckdb_db.execute(
-                query,
+                sake.QUERY["genotype_query"],
                 {
                     "path": str(part_path),
                 },
