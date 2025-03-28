@@ -42,7 +42,7 @@ class Sake:
 
     # Mandatory member
     sake_path: pathlib.Path = dataclasses.field(kw_only=False)
-    target: str = dataclasses.field(kw_only=False)
+    preindication: str = dataclasses.field(kw_only=False)
 
     # Optional member
     threads: int | None = dataclasses.field(default=os.cpu_count())
@@ -74,7 +74,7 @@ class Sake:
             if self.__getattribute__(key) is None:
                 str_value = str(value)
                 if "{target}" in str_value:
-                    str_value = str_value.format(target=self.target)
+                    str_value = str_value.format(target=self.preindication)
 
                 self.__setattr__(key, self.sake_path / str_value)
 
@@ -193,7 +193,10 @@ class Sake:
         select_columns: list[str] | None = None,
     ) -> polars.DataFrame:
         """Get all variants of an annotations."""
-        annotation_path = self.annotations_path / f"{name}" / f"{version}"  # type: ignore[operator]
+        fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
+
+        print(self.annotations_path / f"{name}" / f"{fix_version}")
+        annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]
 
         schema = polars.read_parquet_schema(annotation_path / "1.parquet")
         chromosomes_list = [
@@ -224,7 +227,7 @@ class Sake:
                 query,
                 {
                     "annotation_path": str(
-                        self.annotations_path / f"{name}" / f"{version}" / f"{chrom}.parquet",  # type: ignore[operator]
+                        self.annotations_path / f"{name}" / f"{fix_version}" / f"{chrom}.parquet",  # type: ignore[operator]
                     ),
                     "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
                 },
@@ -317,8 +320,10 @@ class Sake:
 
         Require `id` column in variants value
         """
+        fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
+
         # annotations_path are set in __post_init__
-        annotation_path = self.annotations_path / f"{name}" / f"{version}"  # type: ignore[operator]
+        annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]
 
         schema = polars.read_parquet_schema(annotation_path / "1.parquet")
         if "id" in schema:
@@ -433,7 +438,7 @@ class Sake:
         """  # noqa: S608 we accept risk of sql inject
 
         for (pid_crc, *_), _data in iterator:
-            path = pathlib.Path(str(self.transmissions_path).format(target="germline")) / f"{pid_crc}.parquet"
+            path = self.transmissions_path / f"{pid_crc}.parquet"   # type: ignore[operator]
 
             if not path.is_file():
                 continue

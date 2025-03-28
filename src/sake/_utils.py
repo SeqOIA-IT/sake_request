@@ -18,7 +18,7 @@ if typing.TYPE_CHECKING:
     import pathlib
 
 
-__all__ = ["GenotypeQuery", "fix_variants_path", "wrap_iterator"]
+__all__ = ["GenotypeQuery", "fix_annotation_version", "fix_variants_path", "wrap_iterator"]
 
 
 def wrap_iterator(
@@ -43,6 +43,14 @@ def fix_variants_path(path: pathlib.Path, chrom: str | None = None) -> str:
         return str(path / f"{chrom}.parquett")
     return str(path.with_suffix(".parquet"))
 
+
+def fix_annotation_version(name: str, version: str, preindication: str) -> str:
+    if name in {"snpeff", "variant2gene"}:
+        return f"{version}/{preindication}"
+    if name == "spliceai":
+        return ""
+
+    return version
 
 class GenotypeQuery:
     """Class to run genotype quering."""

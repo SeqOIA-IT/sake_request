@@ -656,7 +656,7 @@ def test_get_annotations() -> None:
     sake_path = pathlib.Path("tests/data")
     sake = Sake(sake_path, "germline")
 
-    result = sake.get_annotations("snpeff", "4.3t/germline")
+    result = sake.get_annotations("snpeff", "4.3t")
     result = result.filter(polars.col("snpeff_impact") == "HIGH")
 
     assert result.get_column("id").sort().to_list() == []
@@ -788,7 +788,7 @@ def test_add_annotations() -> None:
     annotations = sake.add_annotations(
         variants,
         "snpeff",
-        "4.3t/germline",
+        "4.3t",
         select_columns=[
             "effect",
             "impact",
@@ -841,7 +841,7 @@ def test_add_annotations() -> None:
     annotations = sake.add_annotations(
         variants,
         "snpeff",
-        "4.3t/germline",
+        "4.3t",
         select_columns=[
             "effect",
             "impact",
