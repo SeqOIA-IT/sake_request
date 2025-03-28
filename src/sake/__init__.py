@@ -8,16 +8,15 @@ from __future__ import annotations
 # std import
 import sys
 
-from sake import utils
-
 # 3rd party import
 # project import
+from sake import _utils, utils
 from sake.obj import Sake
 
 if sys.version_info[:2] <= (3, 9):
     from sake import abc, dataclasses
 
-__all__: list[str] = ["Sake", "utils"]
+__all__: list[str] = ["Sake", "_utils", "utils"]
 
 if sys.version_info[:2] <= (3, 9):
     __all__ += ["abc", "dataclasses"]

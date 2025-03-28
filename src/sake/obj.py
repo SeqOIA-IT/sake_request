@@ -16,7 +16,6 @@ else:
 # 3rd party import
 import duckdb
 import polars
-from tqdm.auto import tqdm
 
 # project import
 import sake
@@ -27,9 +26,11 @@ __all__: list[str] = ["Sake"]
 DEFAULT_PATH = {
     "aggregations_path": "aggregations",
     "annotations_path": "annotations",
+    "cnv_path": pathlib.Path("{target}") / "cnv",
     "partitions_path": pathlib.Path("{target}") / "genotypes" / "partitions",
     "prescriptions_path": pathlib.Path("{target}") / "genotypes" / "samples",
     "samples_path": pathlib.Path("samples") / "patients.parquet",
+    "str_path": pathlib.Path("{target}") / "str",
     "transmissions_path": pathlib.Path("{target}") / "genotypes" / "transmissions",
     "variants_path": pathlib.Path("{target}") / "variants",
 }
@@ -41,6 +42,7 @@ class Sake:
 
     # Mandatory member
     sake_path: pathlib.Path = dataclasses.field(kw_only=False)
+    target: str = dataclasses.field(kw_only=False)
 
     # Optional member
     threads: int | None = dataclasses.field(default=os.cpu_count())
@@ -49,6 +51,7 @@ class Sake:
     # Optional member generate from sake_path
     aggregations_path: pathlib.Path | None = None
     annotations_path: pathlib.Path | None = None
+    cnv_path: pathlib.Path | None = None
     partitions_path: pathlib.Path | None = None
     prescriptions_path: pathlib.Path | None = None
     samples_path: pathlib.Path | None = None
@@ -68,7 +71,11 @@ class Sake:
 
         for key, value in DEFAULT_PATH.items():
             if self.__getattribute__(key) is None:
-                self.__setattr__(key, self.sake_path / value)
+                str_value = str(value)
+                if "{target}" in str_value:
+                    str_value = str_value.format(target=self.target)
+
+                self.__setattr__(key, self.sake_path / str_value)
 
     def all_variants(self, target: str) -> polars.DataFrame:
         """Get all variants of a target in present in Sake."""
@@ -115,11 +122,7 @@ class Sake:
         """Get variants in multiple intervals."""
         all_variants = []
         minimal_length = min(len(chroms), len(starts), len(stops))
-        iterator = (
-            tqdm(zip(chroms, zip(starts, stops)), total=minimal_length)
-            if self.activate_tqdm
-            else zip(chroms, zip(starts, stops))
-        )
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, zip(starts, stops), total=minimal_length)
 
         for chrom, (start, stop) in iterator:
             all_variants.append(
@@ -145,7 +148,7 @@ class Sake:
             query,
             {
                 "sample_path": str(
-                    pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{prescription}.parquet",
+                    self.prescriptions_path / f"{prescription}.parquet",
                 ),
                 "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
             },
@@ -164,7 +167,7 @@ class Sake:
             v.id = g.id
         """
 
-        iterator = tqdm(prescriptions) if self.activate_tqdm else prescriptions
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, prescriptions)
 
         all_variants = []
         for pid in iterator:
@@ -217,7 +220,7 @@ class Sake:
         """  # noqa: S608 we accept risk of sql inject
 
         all_annotations = []
-        iterator = tqdm(chromosomes_list) if self.activate_tqdm else chromosomes_list
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, chromosomes_list)
         for chrom in iterator:
             result = self.db.execute(
                 query,
@@ -284,10 +287,10 @@ class Sake:
             drop_column.append("id_part")
 
         all_genotypes: list[polars.DataFrame | None] = []
-        iterator = (
-            tqdm(variants.group_by(["id_part"]), total=variants.get_column("id_part").unique().len())
-            if self.activate_tqdm
-            else variants.group_by(["id_part"])
+        iterator = sake._utils.wrap_iterator(
+            self.activate_tqdm,
+            variants.group_by(["id_part"]),
+            total=variants.get_column("id_part").unique().len(),
         )
 
         if read_threads == 1:
@@ -327,10 +330,10 @@ class Sake:
         columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
         all_annotations = []
-        iterator = (
-            tqdm(variants.group_by(["chr"]), total=variants.get_column("chr").unique().len())
-            if self.activate_tqdm
-            else variants.group_by(["chr"])
+        iterator = sake._utils.wrap_iterator(
+            self.activate_tqdm,
+            variants.group_by(["chr"]),
+            total=variants.get_column("chr").unique().len(),
         )
 
         query = f"""
@@ -414,10 +417,10 @@ class Sake:
 
         input_columns = ",".join([f"v.{col}" for col in variants.schema if col != "id"])
 
-        iterator = (
-            tqdm(variants.group_by(["pid_crc"]), total=variants.get_column("pid_crc").unique().len())
-            if self.activate_tqdm
-            else variants.group_by(["pid_crc"])
+        iterator = sake._utils.wrap_iterator(
+            self.activate_tqdm,
+            variants.group_by(["pid_crc"]),
+            total=variants.get_column("pid_crc").unique().len(),
         )
 
         query = f"""
