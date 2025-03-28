@@ -55,6 +55,7 @@ class Sake:
     partitions_path: pathlib.Path | None = None
     prescriptions_path: pathlib.Path | None = None
     samples_path: pathlib.Path | None = None
+    str_path: pathlib.Path | None = None
     transmissions_path: pathlib.Path | None = None
     variants_path: pathlib.Path | None = None
 
@@ -77,7 +78,7 @@ class Sake:
 
                 self.__setattr__(key, self.sake_path / str_value)
 
-    def all_variants(self, target: str) -> polars.DataFrame:
+    def all_variants(self) -> polars.DataFrame:
         """Get all variants of a target in present in Sake."""
         query = """
         select
@@ -89,11 +90,11 @@ class Sake:
         return self.db.execute(
             query,
             {
-                "path": sake.utils.fix_variants_path(self.variants_path, target, None),  # type: ignore[arg-type]
+                "path": sake._utils.fix_variants_path(self.variants_path, None),  # type: ignore[arg-type]
             },
         ).pl()
 
-    def get_interval(self, target: str, chrom: str, start: int, stop: int) -> polars.DataFrame:
+    def get_interval(self, chrom: str, start: int, stop: int) -> polars.DataFrame:
         """Get variants from chromosome between start and stop."""
         query = """
         select
@@ -111,27 +112,27 @@ class Sake:
         return self.db.execute(
             query,
             {
-                "path": sake.utils.fix_variants_path(self.variants_path, target, chrom),  # type: ignore[arg-type]
+                "path": sake._utils.fix_variants_path(self.variants_path, chrom),  # type: ignore[arg-type]
                 "chrom": chrom,
                 "start": start,
                 "stop": stop,
             },
         ).pl()
 
-    def get_intervals(self, target: str, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
+    def get_intervals(self, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
         """Get variants in multiple intervals."""
         all_variants = []
         minimal_length = min(len(chroms), len(starts), len(stops))
-        iterator = sake._utils.wrap_iterator(self.activate_tqdm, zip(starts, stops), total=minimal_length)
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, zip(chroms, zip(starts, stops)), total=minimal_length)  # type: ignore[arg-type]
 
         for chrom, (start, stop) in iterator:
             all_variants.append(
-                self.get_interval(target, chrom, start, stop),
+                self.get_interval(chrom, start, stop),
             )
 
         return polars.concat(all_variants)
 
-    def get_variant_of_prescription(self, prescription: str, target: str) -> polars.DataFrame:
+    def get_variant_of_prescription(self, prescription: str) -> polars.DataFrame:
         """Get all variants of a prescription."""
         query = """
         select
@@ -148,13 +149,13 @@ class Sake:
             query,
             {
                 "sample_path": str(
-                    self.prescriptions_path / f"{prescription}.parquet",
+                    self.prescriptions_path / f"{prescription}.parquet",  # type: ignore[operator]
                 ),
-                "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
+                "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
             },
         ).pl()
 
-    def get_variant_of_prescriptions(self, prescriptions: list[str], target: str) -> polars.DataFrame:
+    def get_variant_of_prescriptions(self, prescriptions: list[str]) -> polars.DataFrame:
         """Get all variants of multiple prescriptions."""
         query = """
         select
@@ -167,7 +168,7 @@ class Sake:
             v.id = g.id
         """
 
-        iterator = sake._utils.wrap_iterator(self.activate_tqdm, prescriptions)
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, prescriptions)  # type: ignore[arg-type]
 
         all_variants = []
         for pid in iterator:
@@ -175,10 +176,8 @@ class Sake:
                 self.db.execute(
                     query,
                     {
-                        "sample_path": str(
-                            pathlib.Path(str(self.prescriptions_path).format(target=target)) / f"{pid}.parquet",
-                        ),
-                        "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
+                        "sample_path": str(self.prescriptions_path / f"{pid}.parquet"),  # type: ignore[operator]
+                        "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
                     },
                 ).pl(),
             )
@@ -189,7 +188,6 @@ class Sake:
         self,
         name: str,
         version: str,
-        target: str,
         *,
         rename_column: bool = True,
         select_columns: list[str] | None = None,
@@ -220,7 +218,7 @@ class Sake:
         """  # noqa: S608 we accept risk of sql inject
 
         all_annotations = []
-        iterator = sake._utils.wrap_iterator(self.activate_tqdm, chromosomes_list)
+        iterator = sake._utils.wrap_iterator(self.activate_tqdm, chromosomes_list)  # type: ignore[arg-type]
         for chrom in iterator:
             result = self.db.execute(
                 query,
@@ -228,7 +226,7 @@ class Sake:
                     "annotation_path": str(
                         self.annotations_path / f"{name}" / f"{version}" / f"{chrom}.parquet",  # type: ignore[operator]
                     ),
-                    "variant_path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
+                    "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
                 },
             ).pl()
 
@@ -243,7 +241,7 @@ class Sake:
 
         return result
 
-    def add_variants(self, _data: polars.DataFrame, target: str) -> polars.DataFrame:
+    def add_variants(self, _data: polars.DataFrame) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
         query = """
         select
@@ -259,14 +257,13 @@ class Sake:
         return self.db.execute(
             query,
             {
-                "path": sake.utils.fix_variants_path(self.variants_path, target),  # type: ignore[arg-type]
+                "path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
             },
         ).pl()
 
     def add_genotypes(
         self,
         variants: polars.DataFrame,
-        target: str,
         *,
         keep_id_part: bool = False,
         drop_column: list[str] | None = None,
@@ -278,7 +275,6 @@ class Sake:
         Require `id` column in variants value
         """
         variants = sake.utils.add_id_part(variants, number_of_bits=number_of_bits)
-        path_with_target = pathlib.Path(str(self.partitions_path).format(target=target))
 
         if drop_column is None:
             drop_column = []
@@ -288,17 +284,17 @@ class Sake:
 
         all_genotypes: list[polars.DataFrame | None] = []
         iterator = sake._utils.wrap_iterator(
-            self.activate_tqdm,
+            self.activate_tqdm,  # type: ignore[arg-type]
             variants.group_by(["id_part"]),
             total=variants.get_column("id_part").unique().len(),
         )
 
         if read_threads == 1:
-            query = sake.utils.GenotypeQuery(self.threads, path_with_target, drop_column)  # type: ignore[arg-type]
+            query = sake._utils.GenotypeQuery(self.threads, self.partitions_path, drop_column)  # type: ignore[arg-type]
             all_genotypes = list(map(query, iterator))
         else:
             duckdb_threads = self.threads // read_threads  # type: ignore[operator]
-            query = sake.utils.GenotypeQuery(duckdb_threads, path_with_target, drop_column)
+            query = sake._utils.GenotypeQuery(duckdb_threads, self.partitions_path, drop_column)  # type: ignore[arg-type]
             self.db.query(f"SET threads TO {duckdb_threads};")
 
             with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
@@ -331,7 +327,7 @@ class Sake:
 
         all_annotations = []
         iterator = sake._utils.wrap_iterator(
-            self.activate_tqdm,
+            self.activate_tqdm,  # type: ignore[arg-type]
             variants.group_by(["chr"]),
             total=variants.get_column("chr").unique().len(),
         )
@@ -418,7 +414,7 @@ class Sake:
         input_columns = ",".join([f"v.{col}" for col in variants.schema if col != "id"])
 
         iterator = sake._utils.wrap_iterator(
-            self.activate_tqdm,
+            self.activate_tqdm,  # type: ignore[arg-type]
             variants.group_by(["pid_crc"]),
             total=variants.get_column("pid_crc").unique().len(),
         )

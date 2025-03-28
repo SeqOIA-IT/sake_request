@@ -99,10 +99,10 @@ def test_id_part() -> None:
 def test_recurrence() -> None:
     """Check recurrence."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_interval("germline", "10", 79257338, 121966721)
-    genotyped = sake.add_genotypes(variants, "germline")
+    variants = sake.get_interval("10", 79257338, 121966721)
+    genotyped = sake.add_genotypes(variants)
     recurrence = utils.add_recurrence(genotyped).select("id", "sake_AC").unique("id")
 
     truth = polars.DataFrame(
@@ -132,9 +132,9 @@ def test_recurrence() -> None:
 def test_list2string() -> None:
     """Check list2string."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_variant_of_prescription("AAAA", "germline")
+    variants = sake.get_variant_of_prescription("AAAA")
     variants = variants.filter(polars.col("dp") > 70)
 
     clean = utils.list2string(variants, columns=["ad"])
@@ -145,7 +145,7 @@ def test_list2string() -> None:
 def test_get_list() -> None:
     """Check get_list."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
     variants = polars.read_parquet(sake.annotations_path / "snpeff" / "4.3t" / "germline" / "10.parquet")  # type: ignore[operator]
 

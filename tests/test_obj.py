@@ -495,7 +495,7 @@ def test_default_value() -> None:
     """Check default object."""
     sake_path = pathlib.Path("sake")
 
-    database = Sake(sake_path)
+    database = Sake(sake_path, "germline")
 
     assert database.sake_path == sake_path
 
@@ -504,11 +504,13 @@ def test_default_value() -> None:
 
     assert database.aggregations_path == sake_path / "aggregations"
     assert database.annotations_path == sake_path / "annotations"
-    assert database.partitions_path == sake_path / "{target}" / "genotypes" / "partitions"
-    assert database.prescriptions_path == sake_path / "{target}" / "genotypes" / "samples"
+    assert database.cnv_path == sake_path / "germline" / "cnv"
+    assert database.partitions_path == sake_path / "germline" / "genotypes" / "partitions"
+    assert database.prescriptions_path == sake_path / "germline" / "genotypes" / "samples"
     assert database.samples_path == sake_path / "samples" / "patients.parquet"
-    assert database.transmissions_path == sake_path / "{target}" / "genotypes" / "transmissions"
-    assert database.variants_path == sake_path / "{target}" / "variants"
+    assert database.str_path == sake_path / "germline" / "str"
+    assert database.transmissions_path == sake_path / "germline" / "genotypes" / "transmissions"
+    assert database.variants_path == sake_path / "germline" / "variants"
 
 
 def test_set_value() -> None:
@@ -517,6 +519,7 @@ def test_set_value() -> None:
 
     database = Sake(
         sake_path,
+        "germline",
         activate_tqdm=True,
         threads=23,
         aggregations_path=sake_path / "other",
@@ -545,9 +548,9 @@ def test_set_value() -> None:
 def test_get_all() -> None:
     """Check all variants."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.all_variants("germline")
+    result = sake.all_variants()
 
     truth = polars.read_parquet("tests/data/germline/variants.parquet")
 
@@ -557,9 +560,9 @@ def test_get_all() -> None:
 def test_get_interval() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.get_interval("germline", "X", 47115191, 99009863)
+    result = sake.get_interval("X", 47115191, 99009863)
 
     truth = TRUTH.select("id", "chr", "pos", "ref", "alt").unique("id")
 
@@ -569,9 +572,9 @@ def test_get_interval() -> None:
 def test_get_intervals() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.get_intervals("germline", ["X", "10"], [47115191, 47115191], [99009863, 99009863])
+    result = sake.get_intervals(["X", "10"], [47115191, 47115191], [99009863, 99009863])
 
     assert result.get_column("id").to_list() == [
         6369631684756766724,
@@ -600,9 +603,9 @@ def test_get_intervals() -> None:
 def test_pid_variant() -> None:
     """Check get variant of prescription."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.get_variant_of_prescription("AAAA", "germline")
+    result = sake.get_variant_of_prescription("AAAA")
     result = result.filter(polars.col("dp") > 70)
 
     assert result.get_column("id").sort().to_list() == [
@@ -619,9 +622,9 @@ def test_pid_variant() -> None:
 def test_pid_variants() -> None:
     """Check get variant of prescription."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.get_variant_of_prescriptions(["EEEE", "FFFF"], "germline")
+    result = sake.get_variant_of_prescriptions(["EEEE", "FFFF"])
     result = result.filter(polars.col("dp") > 70)
 
     assert result.get_column("id").sort().to_list() == [
@@ -651,9 +654,9 @@ def test_pid_variants() -> None:
 def test_get_annotations() -> None:
     """Check get annotations."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    result = sake.get_annotations("snpeff", "4.3t/germline", "germline")
+    result = sake.get_annotations("snpeff", "4.3t/germline")
     result = result.filter(polars.col("snpeff_impact") == "HIGH")
 
     assert result.get_column("id").sort().to_list() == []
@@ -662,10 +665,10 @@ def test_get_annotations() -> None:
 def test_add_variants() -> None:
     """Check add variant."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
     data = TRUTH.select("id", "id_part", "sample", "gt", "ad", "dp", "gq")
-    result = sake.add_variants(data, "germline")
+    result = sake.add_variants(data)
 
     truth = TRUTH.select("id", "chr", "pos", "ref", "alt", "id_part", "sample", "gt", "ad", "dp", "gq")
 
@@ -675,22 +678,22 @@ def test_add_variants() -> None:
 def test_add_genotypes() -> None:
     """Check add genotype."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_interval("germline", "X", 47115191, 99009863)
+    variants = sake.get_interval("X", 47115191, 99009863)
 
-    result = sake.add_genotypes(variants, "germline")
+    result = sake.add_genotypes(variants)
 
     truth = TRUTH.select("id", "chr", "pos", "ref", "alt", "sample", "gt", "ad", "dp", "gq")
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
-    result = sake.add_genotypes(variants, "germline", keep_id_part=True)
+    result = sake.add_genotypes(variants, keep_id_part=True)
     truth = TRUTH.select("id", "chr", "pos", "ref", "alt", "id_part", "sample", "gt", "ad", "dp", "gq")
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
-    result = sake.add_genotypes(variants, "germline", drop_column=["gq"])
+    result = sake.add_genotypes(variants, drop_column=["gq"])
     truth = TRUTH.select("id", "chr", "pos", "ref", "alt", "sample", "gt", "ad", "dp")
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
@@ -699,10 +702,10 @@ def test_add_genotypes() -> None:
 def test_add_samples_info() -> None:
     """Check add samples_info."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_interval("germline", "X", 47115191, 99009863)
-    genotyped = sake.add_genotypes(variants, "germline")
+    variants = sake.get_interval("X", 47115191, 99009863)
+    genotyped = sake.add_genotypes(variants)
 
     samples_info = sake.add_sample_info(genotyped)
 
@@ -745,10 +748,10 @@ def test_add_samples_info() -> None:
 def test_add_transmissions() -> None:
     """Check add transmissions."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_interval("germline", "X", 47115191, 99009863)
-    genotyped = sake.add_genotypes(variants, "germline")
+    variants = sake.get_interval("X", 47115191, 99009863)
+    genotyped = sake.add_genotypes(variants)
     samples_info = sake.add_sample_info(genotyped)
 
     transmissions = sake.add_transmissions(samples_info)
@@ -779,9 +782,9 @@ def test_add_transmissions() -> None:
 def test_add_annotations() -> None:
     """Check add annotations."""
     sake_path = pathlib.Path("tests/data")
-    sake = Sake(sake_path)
+    sake = Sake(sake_path, "germline")
 
-    variants = sake.get_interval("germline", "X", 47115191, 99009863)
+    variants = sake.get_interval("X", 47115191, 99009863)
     annotations = sake.add_annotations(
         variants,
         "snpeff",
