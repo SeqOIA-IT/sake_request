@@ -88,7 +88,7 @@ QUERY: dict[str, str] = {
         v.*, g.sample, g.gt, g.ad, g.dp, g.gq
     from
         _data as v
-    left join
+    join
         read_parquet($path) as g
     on
         v.id == g.id
