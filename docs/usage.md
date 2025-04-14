@@ -1,8 +1,53 @@
 # Sake Request
 
-Offers an object and some function to help user to interogate sake.
+Is a python package that offers an API to help user to interogate sake.
 
 It's a wrapper around duckdb and thriller functions, so if sake_request doesn't meet your needs, feel free to draw inspiration from it.
+
+A Seqoia dAta laKE should look like this:
+```
+sake
+|-- annotations
+|   |-- clinvar
+|   |-- …
+|   |-- gnomad
+|   |-- snpeff
+|   `-- spliceai
+|-- preindication_1
+|   |-- genotypes
+|   |   |-- partitions
+|   |   |   |-- id_part=0
+|   |   |   |-- …
+|   |   |   `-- id_part=255
+|   |   |-- samples
+|   |   |   |-- sample_1.parquet
+|   |   |   |-- …
+|   |   |   `-- sample_Z.parquet
+|   |   `-- transmissions
+|   |       |-- sample_1.parquet
+|   |       |-- …
+|   |       `-- sample_Z.parquet
+|   `-- variants
+|-- preindication_2
+|   |-- genotypes
+|   |   |-- partitions
+|   |   |   |-- id_part=0
+|   |   |   |-- …
+|   |   |   `-- id_part=255
+|   |   |-- samples
+|   |   |   |-- sample_1.parquet
+|   |   |   |-- …
+|   |   |   `-- sample_Z.parquet
+|   |   `-- transmissions
+|   |       |-- sample_1.parquet
+|   |       |-- …
+|   |       `-- sample_Z.parquet
+|   `-- variants
+`-- samples
+   |-- patients.json
+    |-- patients.parquet
+    `-- pedigree
+```
 
 ## Create request object
 
@@ -12,11 +57,12 @@ import sake
 
 sake_path = pathlib.Path("/path/to/your/sake")
 
-sake_db = sake.Sake(sake_path)
+sake_db = sake.Sake(sake_path, "preindication_1")
 ```
 
 `sake_db` object store:
 - path usefull for sake request
+- on which preindication your request are run
 - number of thread could be use, by default it's set to value return by [`os.cpu_count()`](https://docs.python.org/3/library/os.html#os.cpu_count)
 - if you want activate [tqdm](https://tqdm.github.io/) or not, by default not
 - an object `db` to store duckdb connection
@@ -25,6 +71,7 @@ sake_db = sake.Sake(sake_path)
 sake_db = sake.Sake(
     # mandatory argument
     sake_path,
+	preindication,
 	# optional argument
 	threads=3,
 	activate_tqdm=True,
@@ -38,7 +85,7 @@ This `sake_db` object use 3 thread, activate tqdm progress bar, and annotations 
 ## Get variants from a genomic region
 
 ```
-df = sake_db.get_interval("germline", 10, 329_034, 1_200_340)
+df = sake_db.get_interval(10, 329_034, 1_200_340)
 ```
 
 `df` is a [polars.DataFrame](https://docs.pola.rs/api/python/stable/reference/dataframe/index.html) you can make conversion to and from pandas with [`to_pandas()`](https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.to_pandas.html#polars.DataFrame.to_pandas) and [`from_pandas()`](https://docs.pola.rs/api/python/stable/reference/api/polars.from_pandas.html). The result contains `chr`, `pos`, `ref` and `alt` column that are the minimum to define a variant and also a `id` it's a sake almost unique variants id.
@@ -80,7 +127,7 @@ DataFrame contains all variants(id, chr, pos, …) and annotations information. 
 Your dataframe must contains `id` column (see [variants](#get-variants-from-a-genomic-region)).
 
 ```
-df = sake_db.add_variants(df, "germline")
+df = sake_db.add_variants(df)
 ```
 
 Now `df` store variants imformation:
@@ -94,7 +141,7 @@ Now `df` store variants imformation:
 Your dataframe must contains `id` column (see [variants](#get-variants-from-a-genomic-region)).
 
 ```
-df = sake_db.add_genotypes(df, "germline")
+df = sake_db.add_genotypes(df)
 ```
 
 Now `df` store variants with sample information and genotyping:
@@ -104,10 +151,28 @@ Now `df` store variants with sample information and genotyping:
 - gq: GQ column in vcf
 
 ```
-df = sake_db.add_genotypes(df, "germline", drop_column=["gq"])
+df = sake_db.add_genotypes(df, drop_column=["gq"])
 ```
 
 This df store not store `gq` column if you didn't need a column add it in drop_column.
+
+### Other parameter
+
+To add genotypes information sake_request add a column call `id_part` it's indicate in which genome block genotypes of variants are store. By default this column are drop if you want keep it set `keep_id_part` to True.
+
+In sake structure example number of `id_part` are between 0 to 255 ($2^8 - 1$), but you could use more or less partition ([check variantplaner doc](https://seqoia-it.github.io/variantplaner/usage/#genotypes-structuration)). Number of partitions is a power of 2, `number_of_bits` parameter let you indicate how many partitions is use, default value are 8 $2^8 - 1$ are 255.
+
+You could say to `add_genotypes` to read many partitions file in same time, with `read_threads` parameter.
+
+```
+df = sake_db.add_genotypes(
+	df,
+	keep_id_part: bool = False,
+    drop_column: list[str] | None = None,
+    number_of_bits: int = 8,
+    read_threads: int = 1,
+)
+```
 
 ## Add annotations
 
@@ -131,17 +196,9 @@ This call add to `df` a column AC from the gnomad annotations.
 
 ### Special case
 
-Due to some specificity in annotations path, you should add more information in `version``add_annotations` parameter.
-
-For exemple if you want add germline snpeff annotation you should run:
-```
-df = sake_db.add_annotations(
-	df,
-	"snpeff", # database_name
-	"germline/4.3t", # database_version
-	select_columns=["effect", "impact"]
-)
-```
+Due to some specificity in annotations database some change are made automaticly on parameter:
+- if database_name is `snpeff` or `variant2gene`, preindication is add after version value
+- if database_name is `spliceai`, version value are ignore
 
 In fact `add_annotations` method just concat `sake` path, `database_name` and `database_version`. So to add annotations just check path like `{sake.path}/{database_name}/{database_version}` contains parquet file for each chromosome.
 
@@ -171,3 +228,22 @@ index_transmission = sake_db.add_transmissions(df)
 ```
 
 Result contains only variant of kindex sample with genotype column for index sample, father and mother with coresponding prefix and an origin column. More details in how origin column are build in [variantplaner documentation](https://natir.github.io/variantplaner/usage/#compute-transmission-mode).
+
+```
+index_transmission = sake_db.add_transmissions(
+	df,
+	drop_column=["mother_gq"]
+)
+```
+
+This df store not store `mother_gq` column if you didn't need a column add it in drop_column.
+
+You could say to `add_transmissions` to read many partitions file in same time, with `read_threads` parameter.
+
+```
+add_transmissions(
+	df,
+    drop_column: list[str] | None = None,
+    read_threads: int = 1,
+) -> DataFrame
+```

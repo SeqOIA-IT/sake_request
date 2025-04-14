@@ -1,4 +1,4 @@
-"""Define duckdb query."""
+"""A map that associate query name to duckdb sql query."""
 
 __all__: list[str] = ["QUERY"]
 

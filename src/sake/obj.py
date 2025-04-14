@@ -1,4 +1,4 @@
-"""Define Sake dataclass."""
+"""Define Sake dataclass, main API of sake_request."""
 
 from __future__ import annotations
 
@@ -33,12 +33,13 @@ DEFAULT_PATH = {
     "str_path": pathlib.Path("{target}") / "str",
     "transmissions_path": pathlib.Path("{target}") / "genotypes" / "transmissions",
     "variants_path": pathlib.Path("{target}") / "variants",
+    "genotype_columns": ["gt", "ad", "dp", "gq"],
 }
 
 
 @dataclasses.dataclass(kw_only=True)
 class Sake:
-    """Class that let user extract variants from sake."""
+    """Class that help user to extract variants from sake."""
 
     # Mandatory member
     sake_path: pathlib.Path = dataclasses.field(kw_only=False)
@@ -58,6 +59,7 @@ class Sake:
     str_path: pathlib.Path | None = None
     transmissions_path: pathlib.Path | None = None
     variants_path: pathlib.Path | None = None
+    genotype_columns: list[str] | None = None
 
     # duckdb connection
     db: duckdb.DuckDBPyConnection = dataclasses.field(init=False, repr=False)
@@ -76,7 +78,10 @@ class Sake:
                 if "{target}" in str_value:
                     str_value = str_value.format(target=self.preindication)
 
-                self.__setattr__(key, self.sake_path / str_value)
+                if key.endswith("path"):
+                    self.__setattr__(key, self.sake_path / str_value)
+                else:
+                    self.__setattr__(key, value)
 
     def add_annotations(
         self,
@@ -89,7 +94,17 @@ class Sake:
     ) -> polars.DataFrame:
         """Add annotations to variants.
 
-        Require `id` column in variants value
+        Require `id` column in variants value.
+
+        Parameters:
+          variants: DataFrame you wish to annotate
+          name: Name of annotations you want add to your variants
+          version: version of annotations you want add to your variants
+          rename_column: prefix annotations column name with annotations name
+          select_columns: name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added
+
+        Return:
+          DataFrame with annotations column.
         """
         fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
 
@@ -137,21 +152,38 @@ class Sake:
         variants: polars.DataFrame,
         *,
         keep_id_part: bool = False,
-        drop_column: list[str] | None = None,
+        select_columns: list[str] | None = None,
         number_of_bits: int = 8,
         read_threads: int = 1,
     ) -> polars.DataFrame:
         """Add genotype information to variants DataFrame.
 
-        Require `id` column in variants value
+        Require `id` column in variants value.
+
+        Parameters:
+          variants: DataFrame you wish to add genotypes
+          keep_id_part: method add id_part column, set to True to keep_it
+          select_columns: name of genotype column you want add to your DataFrame, if None all column are added
+          number_of_bits: number of bits use to compute partitions
+          read_threads: number of partitions file read in parallel
+
+        Return:
+          DataFrame with genotype information.
         """
+        if select_columns is None:
+            select_columns = [
+                *variants.schema.names(),
+                "sample",
+                *self.genotype_columns,  # type: ignore[misc]
+            ]
+        else:
+            select_columns = [*variants.schema.names(), "sample", *select_columns]
+
         variants = sake.utils.add_id_part(variants, number_of_bits=number_of_bits)
 
-        if drop_column is None:
-            drop_column = []
-
-        if not keep_id_part:
-            drop_column.append("id_part")
+        print(select_columns)
+        if keep_id_part:
+            select_columns.append("id_part")
 
         all_genotypes: list[polars.DataFrame | None] = []
         iterator = sake._utils.wrap_iterator(
@@ -164,7 +196,7 @@ class Sake:
             self.threads // read_threads,  # type: ignore[operator]
             f"{self.partitions_path}/id_part={{}}/0.parquet",
             "genotype_query",
-            drop_column=drop_column,
+            select_columns=select_columns,
             expressions=[
                 polars.col("ad").cast(polars.List(polars.String)).list.join(",").alias("ad"),
             ],
@@ -192,6 +224,13 @@ class Sake:
         """Add sample information.
 
         Required sample column in polars.DataFrame.
+
+        Parameters:
+          _variants: DataFrame you wish to add sample information
+          select_columns: name of sample information column you want add to your DataFrame, if None all column are added
+
+        Return:
+          DataFrame with sample information.
         """
         # sampless_path are set in __post_init__
         schema = polars.read_parquet_schema(self.samples_path)  # type: ignore[arg-type]
@@ -214,13 +253,33 @@ class Sake:
         self,
         variants: polars.DataFrame,
         *,
-        drop_column: list[str] | None = None,
+        select_columns: list[str] | None = None,
         read_threads: int = 1,
     ) -> polars.DataFrame:
         """Add transmissions information.
 
         Required pid_crc column in polars.DataFrame.
+
+
+        Parameters:
+          variants: DataFrame you wish to add genotypes
+          select_columns: name of transmissions column you want add to your DataFrame, if None all column are added
+          read_threads: number of partitions file read in parallel
+
+        Return:
+          DataFrame with genotype information.
         """
+        if select_columns is None:
+            select_columns = list(variants.schema)
+            select_columns += [
+                f"{prefix}_{suffix}"
+                for suffix in self.genotype_columns  # type: ignore[union-attr]
+                for prefix in ["index", "father", "mother"]
+            ]
+            select_columns += ["origin"]
+        else:
+            select_columns = [*variants.schema.names(), *select_columns, "origin"]
+
         all_transmissions = []
         iterator = sake._utils.wrap_iterator(
             self.activate_tqdm,  # type: ignore[arg-type]
@@ -231,7 +290,7 @@ class Sake:
             self.threads // read_threads,  # type: ignore[operator]
             f"{self.transmissions_path}/{{}}.parquet",
             "add_transmissions",
-            drop_column=drop_column,
+            select_columns=select_columns,
             expressions=[
                 polars.col("father_gt").cast(polars.UInt8).alias("father_gt"),
                 polars.col("index_gt").cast(polars.UInt8).alias("index_gt"),
@@ -282,7 +341,17 @@ class Sake:
         rename_column: bool = True,
         select_columns: list[str] | None = None,
     ) -> polars.DataFrame:
-        """Get all variants of an annotations."""
+        """Get all variants of an annotations.
+
+        Parameters:
+          name: Name of annotations you want
+          version: version of annotations you want
+          rename_column: prefix annotations column name with annotations name
+          select_columns: name of annotations column (same as is in annotations file) you want, if None all column are added
+
+        Return:
+          DataFrame with annotations column.
+        """
         fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
 
         annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]

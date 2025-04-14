@@ -948,11 +948,6 @@ def test_add_genotypes() -> None:
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
-    result = sake.add_genotypes(variants, drop_column=["gq"])
-    truth = TRUTH.select("id", "chr", "pos", "ref", "alt", "sample", "gt", "ad", "dp")
-
-    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
-
 
 def test_add_samples_info() -> None:
     """Check add samples_info."""

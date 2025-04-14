@@ -49,7 +49,7 @@ def fix_variants_path(path: pathlib.Path, chrom: str | None = None) -> str:
 def fix_annotation_version(name: str, version: str, preindication: str) -> str:
     if name in {"snpeff", "variant2gene"}:
         return f"{version}/{preindication}"
-    if name == "spliceai":
+    if name in {"spliceai"}:
         return ""
 
     return version
@@ -64,13 +64,13 @@ class QueryByGroupBy:
         path_template: str,
         query_name: str,
         expressions: polars.IntoExpr | collections.abc.Iterable[polars.IntoExpr] | None = None,
-        drop_column: list[str] | None = None,
+        select_columns: list[str] | None = None,
     ):
         """Create quering object."""
         self.threads = threads
         self.path_template = path_template
         self.query_name = query_name
-        self.drop_column = drop_column
+        self.select_columns = select_columns
         self.expressions = expressions
 
     def __call__(self, params: tuple[tuple[int, typing.Any], polars.DataFrame]) -> polars.DataFrame | None:
@@ -98,7 +98,7 @@ class QueryByGroupBy:
                 self.expressions,
             )
 
-        if self.drop_column is not None:
-            result = result.drop(self.drop_column)
+        if self.select_columns is not None:
+            result = result.select(self.select_columns)
 
         return result
