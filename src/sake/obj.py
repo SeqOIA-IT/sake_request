@@ -181,7 +181,6 @@ class Sake:
 
         variants = sake.utils.add_id_part(variants, number_of_bits=number_of_bits)
 
-        print(select_columns)
         if keep_id_part:
             select_columns.append("id_part")
 

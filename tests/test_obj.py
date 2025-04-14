@@ -511,6 +511,7 @@ def test_default_value() -> None:
     assert database.str_path == sake_path / "germline" / "str"
     assert database.transmissions_path == sake_path / "germline" / "genotypes" / "transmissions"
     assert database.variants_path == sake_path / "germline" / "variants"
+    assert database.genotype_columns == ["gt", "ad", "dp", "gq"]
 
 
 def test_set_value() -> None:
@@ -529,6 +530,7 @@ def test_set_value() -> None:
         samples_path=sake_path / "other",
         transmissions_path=sake_path / "other",
         variants_path=sake_path / "other",
+        genotype_columns=["gt", "ad"],
     )
 
     assert database.sake_path == sake_path
@@ -543,6 +545,7 @@ def test_set_value() -> None:
     assert database.samples_path == sake_path / "other"
     assert database.transmissions_path == sake_path / "other"
     assert database.variants_path == sake_path / "other"
+    assert database.genotype_columns == ["gt", "ad"]
 
 
 def test_get_all() -> None:
