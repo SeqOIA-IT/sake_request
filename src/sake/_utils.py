@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 # std import
+import os
 import typing
 
 # 3rd party import
 import duckdb
-import polars
 from tqdm.auto import tqdm
 
 # project import
@@ -18,7 +18,9 @@ if typing.TYPE_CHECKING:  # pragma: no cover
     import collections
     import pathlib
 
-__all__ = ["GenotypeQuery", "fix_annotation_version", "fix_variants_path", "wrap_iterator"]
+    import polars
+
+__all__ = ["QueryByGroupBy", "fix_annotation_version", "fix_variants_path", "wrap_iterator"]
 
 
 def wrap_iterator(
@@ -53,37 +55,50 @@ def fix_annotation_version(name: str, version: str, preindication: str) -> str:
     return version
 
 
-class GenotypeQuery:
-    """Class to run genotype quering."""
+class QueryByGroupBy:
+    """Class to run query on result of polars group by."""
 
-    def __init__(self, threads: int, prefix: pathlib.Path, drop_column: list[str]):
-        """Create genotyping query object."""
+    def __init__(
+        self,
+        threads: int,
+        path_template: str,
+        query_name: str,
+        expressions: polars.IntoExpr | collections.abc.Iterable[polars.IntoExpr] | None = None,
+        drop_column: list[str] | None = None,
+    ):
+        """Create quering object."""
         self.threads = threads
-        self.prefix = prefix
+        self.path_template = path_template
+        self.query_name = query_name
         self.drop_column = drop_column
+        self.expressions = expressions
 
     def __call__(self, params: tuple[tuple[int, typing.Any], polars.DataFrame]) -> polars.DataFrame | None:
-        """Run genotyping of data with information in path."""
+        """Run query."""
         duckdb_db = duckdb.connect(":memory:")
         duckdb_db.query("SET enable_progress_bar = false;")
         duckdb_db.query(f"SET threads TO {self.threads};")
 
-        (id_part, *_), _data = params
+        parameter, _data = params
 
-        part_path = self.prefix / f"id_part={id_part}/0.parquet"
-        if not part_path.is_file():
+        path = self.path_template.format(*parameter)
+
+        if not os.path.isfile(path):
             return None
 
-        return (
-            duckdb_db.execute(
-                sake.QUERY["genotype_query"],
-                {
-                    "path": str(part_path),
-                },
+        result = duckdb_db.execute(
+            sake.QUERY[self.query_name],
+            {
+                "path": path,
+            },
+        ).pl()
+
+        if self.expressions is not None:
+            result = result.with_columns(
+                self.expressions,
             )
-            .pl()
-            .with_columns(
-                ad=polars.col("ad").cast(polars.List(polars.String)).list.join(","),
-            )
-            .drop(self.drop_column)
-        )
+
+        if self.drop_column is not None:
+            result = result.drop(self.drop_column)
+
+        return result

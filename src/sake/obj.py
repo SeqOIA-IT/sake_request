@@ -160,12 +160,20 @@ class Sake:
             total=variants.get_column("id_part").unique().len(),
         )
 
+        query = sake._utils.QueryByGroupBy(
+            self.threads // read_threads,  # type: ignore[operator]
+            f"{self.partitions_path}/id_part={{}}/0.parquet",
+            "genotype_query",
+            drop_column=drop_column,
+            expressions=[
+                polars.col("ad").cast(polars.List(polars.String)).list.join(",").alias("ad"),
+            ],
+        )
+        duckdb_threads = self.threads // read_threads  # type: ignore[operator]
+
         if read_threads == 1:
-            query = sake._utils.GenotypeQuery(self.threads, self.partitions_path, drop_column)  # type: ignore[arg-type]
             all_genotypes = list(map(query, iterator))
         else:
-            duckdb_threads = self.threads // read_threads  # type: ignore[operator]
-            query = sake._utils.GenotypeQuery(duckdb_threads, self.partitions_path, drop_column)  # type: ignore[arg-type]
             self.db.query(f"SET threads TO {duckdb_threads};")
 
             with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
@@ -205,58 +213,48 @@ class Sake:
     def add_transmissions(
         self,
         variants: polars.DataFrame,
+        *,
+        drop_column: list[str] | None = None,
+        read_threads: int = 1,
     ) -> polars.DataFrame:
         """Add transmissions information.
 
         Required pid_crc column in polars.DataFrame.
         """
         all_transmissions = []
-
-        input_columns = ",".join([f"v.{col}" for col in variants.schema if col != "id"])
-
         iterator = sake._utils.wrap_iterator(
             self.activate_tqdm,  # type: ignore[arg-type]
             variants.group_by(["pid_crc"]),
             total=variants.get_column("pid_crc").unique().len(),
         )
+        query = sake._utils.QueryByGroupBy(
+            self.threads // read_threads,  # type: ignore[operator]
+            f"{self.transmissions_path}/{{}}.parquet",
+            "add_transmissions",
+            drop_column=drop_column,
+            expressions=[
+                polars.col("father_gt").cast(polars.UInt8).alias("father_gt"),
+                polars.col("index_gt").cast(polars.UInt8).alias("index_gt"),
+                polars.col("mother_gt").cast(polars.UInt8).alias("mother_gt"),
+                polars.col("father_dp").cast(polars.UInt32).alias("father_dp"),
+                polars.col("index_dp").cast(polars.UInt32).alias("index_dp"),
+                polars.col("mother_dp").cast(polars.UInt32).alias("mother_dp"),
+                polars.col("father_gq").cast(polars.UInt32).alias("father_gq"),
+                polars.col("index_gq").cast(polars.UInt32).alias("index_gq"),
+                polars.col("mother_gq").cast(polars.UInt32).alias("mother_gq"),
+                polars.col("father_ad").cast(polars.List(polars.String)).list.join(",").alias("father_ad"),
+                polars.col("index_ad").cast(polars.List(polars.String)).list.join(",").alias("index_ad"),
+                polars.col("mother_ad").cast(polars.List(polars.String)).list.join(",").alias("mother_ad"),
+            ],
+        )
 
-        query = sake.QUERY["add_transmissions"].format(columns=input_columns)
+        if read_threads == 1:
+            all_transmissions = list(map(query, iterator))
+        else:
+            with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
+                all_transmissions = list(pool.imap(query, iterator))
 
-        for (pid_crc, *_), _data in iterator:
-            path = self.transmissions_path / f"{pid_crc}.parquet"  # type: ignore[operator]
-
-            if not path.is_file():
-                continue
-
-            result = (
-                self.db.execute(
-                    query,
-                    {
-                        "path": str(path),
-                    },
-                )
-                .pl()
-                .cast(
-                    {
-                        "father_gt": polars.UInt8,
-                        "mother_gt": polars.UInt8,
-                        "index_gt": polars.UInt8,
-                        "father_dp": polars.UInt32,
-                        "mother_dp": polars.UInt32,
-                        "father_gq": polars.UInt32,
-                        "mother_gq": polars.UInt32,
-                    },
-                )
-                .with_columns(
-                    father_ad=polars.col("father_ad").cast(polars.List(polars.String)).list.join(","),
-                    mother_ad=polars.col("mother_ad").cast(polars.List(polars.String)).list.join(","),
-                    index_ad=polars.col("index_ad").cast(polars.List(polars.String)).list.join(","),
-                )
-            )
-
-            all_transmissions.append(result)
-
-        return polars.concat(all_transmissions)
+        return polars.concat([df for df in all_transmissions if df is not None])
 
     def add_variants(self, _data: polars.DataFrame) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""

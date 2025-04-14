@@ -73,7 +73,11 @@ QUERY: dict[str, str] = {
     """,
     "add_transmissions": """
     select
-        {columns}, t.*
+        v.*,
+        t.index_gt, t.index_ad, t.index_dp, t.index_gq,
+        t.mother_gt, t.mother_ad, t.mother_dp, t.mother_gq,
+        t.father_gt, t.father_ad, t.father_dp, t.father_gq,
+        t.origin
     from
         _data as v
     left join
