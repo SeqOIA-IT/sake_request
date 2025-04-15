@@ -1,6 +1,6 @@
 # Sake Request
 
-Is a python package that offers an API to help user to interogate sake.
+`sake_request` is a python package that offers an API to help user to interogate sake.
 
 It's a wrapper around duckdb and thriller functions, so if sake_request doesn't meet your needs, feel free to draw inspiration from it.
 
@@ -13,7 +13,7 @@ sake
 |   |-- gnomad
 |   |-- snpeff
 |   `-- spliceai
-|-- preindication_1
+|-- preindication_A
 |   |-- genotypes
 |   |   |-- partitions
 |   |   |   |-- id_part=0
@@ -28,7 +28,7 @@ sake
 |   |       |-- …
 |   |       `-- sample_Z.parquet
 |   `-- variants
-|-- preindication_2
+|-- preindication_B
 |   |-- genotypes
 |   |   |-- partitions
 |   |   |   |-- id_part=0
@@ -45,8 +45,7 @@ sake
 |   `-- variants
 `-- samples
    |-- patients.json
-    |-- patients.parquet
-    `-- pedigree
+   `-- patients.parquet
 ```
 
 ## Create request object
@@ -61,7 +60,8 @@ sake_db = sake.Sake(sake_path, "preindication_1")
 ```
 
 `sake_db` object store:
-- path usefull for sake request
+
+- path use for sake request
 - on which preindication your request are run
 - number of thread could be use, by default it's set to value return by [`os.cpu_count()`](https://docs.python.org/3/library/os.html#os.cpu_count)
 - if you want activate [tqdm](https://tqdm.github.io/) or not, by default not
@@ -88,7 +88,7 @@ This `sake_db` object use 3 thread, activate tqdm progress bar, and annotations 
 df = sake_db.get_interval(10, 329_034, 1_200_340)
 ```
 
-`df` is a [polars.DataFrame](https://docs.pola.rs/api/python/stable/reference/dataframe/index.html) you can make conversion to and from pandas with [`to_pandas()`](https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.to_pandas.html#polars.DataFrame.to_pandas) and [`from_pandas()`](https://docs.pola.rs/api/python/stable/reference/api/polars.from_pandas.html). The result contains `chr`, `pos`, `ref` and `alt` column that are the minimum to define a variant and also a `id` it's a sake almost unique variants id.
+`df` is a [polars.DataFrame](https://docs.pola.rs/api/python/stable/reference/dataframe/index.html) you can make conversion to and from pandas with [`to_pandas()`](https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.to_pandas.html#polars.DataFrame.to_pandas) and [`from_pandas()`](https://docs.pola.rs/api/python/stable/reference/api/polars.from_pandas.html). The result contains `chr`, `pos`, `ref` and `alt` column that are the minimum to define a variant and also a `id`, it's a [sake almost unique variants id](https://seqoia-it.github.io/variantplaner/reference/variantplaner/normalization/#variantplaner.normalization.add_variant_id).
 
 If you have multiple region you could run this:
 ```
@@ -104,12 +104,12 @@ df = sake_db.get_intervals(
 )
 ```
 
-You can see `get_intervals` as just a loop of `get_interval`.
+You can see `get_intervals` as just a loop over `get_interval`.
 
 ## Get variants from prescription
 
 ```
-df = sake_db.get_variant_of_prescription("AAAA", "germline")
+df = sake_db.get_variant_of_prescription("AAAA")
 ```
 
 DataFrame contains all variants(id, chr, pos, …) and genotype (gt, ad, …) information of prescription AAAA in germline dataset.
@@ -117,7 +117,7 @@ DataFrame contains all variants(id, chr, pos, …) and genotype (gt, ad, …) in
 ## Get variants from an annotations
 
 ```
-df = sake_db.get_annotations("clinvar", "20241103", "germline")
+df = sake_db.get_annotations("clinvar", "20241103")
 ```
 
 DataFrame contains all variants(id, chr, pos, …) and annotations information. By default columns are rename with annotations name as prefix, add `rename_column=False` in call to change this behavior. If you want just some column use `select_columns` parameter, use original name without prefix.
@@ -145,16 +145,17 @@ df = sake_db.add_genotypes(df)
 ```
 
 Now `df` store variants with sample information and genotyping:
+
 - gt: number of 1 in GT column in vcf, phasing and . information are lose
 - ad: string that stop AD column in vcf
 - db: DP column in vcf
 - gq: GQ column in vcf
 
 ```
-df = sake_db.add_genotypes(df, drop_column=["gq"])
+df = sake_db.add_genotypes(df, select_columns=["gt"])
 ```
 
-This df store not store `gq` column if you didn't need a column add it in drop_column.
+This df store only `sample` and `gt` column.
 
 ### Other parameter
 
@@ -197,6 +198,7 @@ This call add to `df` a column AC from the gnomad annotations.
 ### Special case
 
 Due to some specificity in annotations database some change are made automaticly on parameter:
+
 - if database_name is `snpeff` or `variant2gene`, preindication is add after version value
 - if database_name is `spliceai`, version value are ignore
 
