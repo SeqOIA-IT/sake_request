@@ -91,6 +91,7 @@ class Sake:
         *,
         rename_column: bool = True,
         select_columns: list[str] | None = None,
+        read_threads: int = 1,
     ) -> polars.DataFrame:
         """Add annotations to variants.
 
@@ -106,39 +107,51 @@ class Sake:
         Return:
           DataFrame with annotations column.
         """
-        fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
+        annotation_path_result = sake._utils.fix_annotation_path(
+            self.annotations_path, name, version, self.preindication,  # type: ignore[arg-type]
+        )
+        if annotation_path_result is not None:
+            (annotation_path, split_by_chr) = annotation_path_result
+        else:
+            # No annotations path return input
+            return variants
 
-        # annotations_path are set in __post_init__
-        annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]
-
-        schema = polars.read_parquet_schema(annotation_path / "1.parquet")
+        schema = polars.read_parquet_schema(annotation_path)
         if "id" in schema:
             del schema["id"]
         columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
-        all_annotations = []
-        iterator = sake._utils.wrap_iterator(
-            self.activate_tqdm,  # type: ignore[arg-type]
-            variants.group_by(["chr"]),
-            total=variants.get_column("chr").unique().len(),
-        )
+        if split_by_chr:
+            iterator = sake._utils.wrap_iterator(
+                self.activate_tqdm,  # type: ignore[arg-type]
+                variants.group_by(["chr"]),
+                total=variants.get_column("chr").unique().len(),
+            )
+            annotation_path = os.path.dirname(annotation_path)
 
-        query = sake.QUERY["add_annotations"].format(columns=columns)
+            query_obj = sake._utils.QueryByGroupBy(
+                self.threads // read_threads,  # type: ignore[operator]
+                f"{annotation_path}/{{}}.parquet",
+                "add_annotations",
+                {"columns": columns},
+                select_columns,
+            )
+            if read_threads == 1:
+                all_annotations = list(map(query_obj, iterator))
+            else:
+                with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
+                    all_annotations = list(pool.imap(query_obj, iterator))
 
-        for (chrom, *_), _data in iterator:
-            if not (annotation_path / f"{chrom}.parquet").is_file():
-                continue
+            result = polars.concat([df for df in all_annotations if df is not None])
+        else:
+            query_str = sake.QUERY["add_annotations"].format(columns=columns)
 
             result = self.db.execute(
-                query,
+                query_str,
                 {
-                    "path": str(annotation_path / f"{chrom}.parquet"),
+                    "path": annotation_path,
                 },
             ).pl()
-
-            all_annotations.append(result)
-
-        result = polars.concat(all_annotations)
 
         if rename_column:
             result = result.rename(
@@ -200,17 +213,12 @@ class Sake:
                 polars.col("ad").cast(polars.List(polars.String)).list.join(",").alias("ad"),
             ],
         )
-        duckdb_threads = self.threads // read_threads  # type: ignore[operator]
 
         if read_threads == 1:
             all_genotypes = list(map(query, iterator))
         else:
-            self.db.query(f"SET threads TO {duckdb_threads};")
-
             with multiprocessing.get_context("spawn").Pool(processes=read_threads) as pool:
                 all_genotypes = list(pool.imap(query, iterator))
-
-            self.db.query(f"SET threads TO {self.threads}")
 
         return polars.concat([df for df in all_genotypes if df is not None])
 
@@ -339,51 +347,65 @@ class Sake:
         *,
         rename_column: bool = True,
         select_columns: list[str] | None = None,
-    ) -> polars.DataFrame:
+    ) -> polars.DataFrame | None:
         """Get all variants of an annotations.
 
         Parameters:
-          name: Name of annotations you want
-          version: version of annotations you want
+          name: Name of annotations you want add to your variants
+          version: version of annotations you want add to your variants
           rename_column: prefix annotations column name with annotations name
-          select_columns: name of annotations column (same as is in annotations file) you want, if None all column are added
+          select_columns: name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added
 
         Return:
           DataFrame with annotations column.
         """
-        fix_version = sake._utils.fix_annotation_version(name, version, self.preindication)
+        annotation_path_result = sake._utils.fix_annotation_path(
+            self.annotations_path, name, version, self.preindication,  # type: ignore[arg-type]
+        )
+        if annotation_path_result is not None:
+            (annotation_path, split_by_chr) = annotation_path_result
+        else:
+            # No annotations path return input
+            return None
 
-        annotation_path = self.annotations_path / f"{name}" / f"{fix_version}"  # type: ignore[operator]
-
-        schema = polars.read_parquet_schema(annotation_path / "1.parquet")
-        chromosomes_list = [
-            entry.name.split(".")[0]
-            for entry in os.scandir(annotation_path)
-            if entry.is_file() and entry.name.endswith(".parquet")
-        ]
-
+        schema = polars.read_parquet_schema(annotation_path)
         if "id" in schema:
             del schema["id"]
-            columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
+        columns = ",".join([f"a.{col}" for col in schema if select_columns is None or col in select_columns])
 
         query = sake.QUERY["get_annotations"].format(columns=columns)
+        if split_by_chr:
+            chromosomes_path = [
+                entry.path
+                for entry in os.scandir(os.path.dirname(annotation_path))
+                if entry.is_file() and entry.name.endswith(".parquet")
+            ]
+            iterator = sake._utils.wrap_iterator(
+                self.activate_tqdm,  # type: ignore[arg-type]
+                chromosomes_path,
+            )
 
-        all_annotations = []
-        iterator = sake._utils.wrap_iterator(self.activate_tqdm, chromosomes_list)  # type: ignore[arg-type]
-        for chrom in iterator:
+            all_annotations = []
+            for path in iterator:
+                chrom_result = self.db.execute(
+                    query,
+                    {
+                        "annotation_path": path,
+                        "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
+                    },
+                ).pl()
+
+                all_annotations.append(chrom_result)
+
+            result = polars.concat([df for df in all_annotations if df is not None])
+        else:
             result = self.db.execute(
                 query,
                 {
-                    "annotation_path": str(
-                        annotation_path / f"{chrom}.parquet",
-                    ),
+                    "annotation_path": annotation_path,
                     "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
                 },
             ).pl()
-
-            all_annotations.append(result)
-
-        result = polars.concat(all_annotations)
 
         if rename_column:
             result = result.rename(

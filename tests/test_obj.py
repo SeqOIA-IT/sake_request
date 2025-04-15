@@ -915,8 +915,9 @@ def test_get_annotations() -> None:
     sake = Sake(sake_path, "germline")
 
     result = sake.get_annotations("snpeff", "4.3t")
-    result = result.filter(polars.col("snpeff_impact") == "HIGH")
+    assert result is not None
 
+    result = result.filter(polars.col("snpeff_impact") == "HIGH")
     assert result.get_column("id").sort().to_list() == []
 
 
@@ -1038,6 +1039,7 @@ def test_add_annotations() -> None:
     sake = Sake(sake_path, "germline")
 
     variants = sake.get_interval("X", 47115191, 99009863)
+
     annotations = sake.add_annotations(
         variants,
         "snpeff",

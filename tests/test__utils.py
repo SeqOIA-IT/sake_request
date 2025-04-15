@@ -28,9 +28,31 @@ def test_variants_path() -> None:
     assert sake._utils.fix_variants_path(pathlib.Path("tests/data/germline"), "10") == "tests/data/germline/10.parquet"
 
 
-def test_fix_annotation_version() -> None:
+def test_fix_annotation_path() -> None:
     """Check fix annotation version."""
-    assert sake._utils.fix_annotation_version("snpeff", "aaa", "bbb") == "aaa/bbb"
-    assert sake._utils.fix_annotation_version("variant2gene", "aaa", "bbb") == "aaa/bbb"
-    assert sake._utils.fix_annotation_version("spliceai", "aaa", "bbb") == ""
-    assert sake._utils.fix_annotation_version("gnomad", "aaa", "bbb") == "aaa"
+    path = pathlib.Path("tests/data/annotations")
+
+    result = sake._utils.fix_annotation_path(path, "snpeff", "4.3t", "germline")
+    assert result is not None
+    assert result[0] == str(path / "snpeff" / "4.3t" / "germline" / "1.parquet")
+    assert result[1]
+
+    result = sake._utils.fix_annotation_path(path, "snpeff", "4.3t", "germline", chrom_basename="X")
+    assert result is not None
+    assert result[0] == str(path / "snpeff" / "4.3t" / "germline" / "X.parquet")
+    assert result[1]
+
+    result = sake._utils.fix_annotation_path(path, "nvp", "1.0", "germline")
+    assert result is not None
+    assert result[0] == str(path / "nvp" / "1.0" / "germline.parquet")
+    assert not result[1]
+
+    result = sake._utils.fix_annotation_path(path, "gnomad", "3.1.2", "germline")
+    assert result is not None
+    assert result[0] == str(path / "gnomad" / "3.1.2" / "1.parquet")
+    assert result[1]
+
+    result = sake._utils.fix_annotation_path(path, "nc", "1.0", "germline")
+    assert result is not None
+    assert result[0] == str(path / "nc" / "1.parquet")
+    assert result[1]

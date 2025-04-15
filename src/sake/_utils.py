@@ -20,7 +20,7 @@ if typing.TYPE_CHECKING:  # pragma: no cover
 
     import polars
 
-__all__ = ["QueryByGroupBy", "fix_annotation_version", "fix_variants_path", "wrap_iterator"]
+__all__ = ["QueryByGroupBy", "fix_annotation_path", "fix_variants_path", "wrap_iterator"]
 
 
 def wrap_iterator(
@@ -46,13 +46,40 @@ def fix_variants_path(path: pathlib.Path, chrom: str | None = None) -> str:
     return str(path.with_suffix(".parquet"))
 
 
-def fix_annotation_version(name: str, version: str, preindication: str) -> str:
-    if name in {"snpeff", "variant2gene"}:
-        return f"{version}/{preindication}"
-    if name in {"spliceai"}:
-        return ""
+def fix_annotation_path(
+    annotations_path: pathlib.Path,
+    name: str,
+    version: str,
+    preindication: str,
+    chrom_basename: str = "1",
+) -> tuple[str, bool] | None:
+    """Generate annotation path by check present of file.
 
-    return version
+    Return:
+      - path of annotation
+      - if annotation are split by chromosome or not
+    """
+    path = annotations_path / name / version / preindication / f"{chrom_basename}.parquet"
+    if path.is_file():
+        return (str(path), True)
+
+    path = annotations_path / name / version / f"{preindication}.parquet"
+    if path.is_file():
+        return (str(path), False)
+
+    path = annotations_path / name / version / f"{chrom_basename}.parquet"
+    if path.is_file():
+        return (str(path), True)
+
+    path = annotations_path / name / f"{version}.parquet"
+    if path.is_file():
+        return (str(path), False)
+
+    path = annotations_path / name / f"{chrom_basename}.parquet"
+    if path.is_file():
+        return (str(path), True)
+
+    return None
 
 
 class QueryByGroupBy:
@@ -63,6 +90,7 @@ class QueryByGroupBy:
         threads: int,
         path_template: str,
         query_name: str,
+        query_params: dict[str, str] | None = None,
         expressions: polars.IntoExpr | collections.abc.Iterable[polars.IntoExpr] | None = None,
         select_columns: list[str] | None = None,
     ):
@@ -70,6 +98,7 @@ class QueryByGroupBy:
         self.threads = threads
         self.path_template = path_template
         self.query_name = query_name
+        self.query_params = query_params
         self.select_columns = select_columns
         self.expressions = expressions
 
@@ -82,12 +111,16 @@ class QueryByGroupBy:
         parameter, _data = params
 
         path = self.path_template.format(*parameter)
+        if self.query_params is not None:
+            query = sake.QUERY[self.query_name].format(**self.query_params)
+        else:
+            query = sake.QUERY[self.query_name]
 
         if not os.path.isfile(path):
             return None
 
         result = duckdb_db.execute(
-            sake.QUERY[self.query_name],
+            query,
             {
                 "path": path,
             },
