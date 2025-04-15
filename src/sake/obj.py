@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
+import dataclasses
+
 # std import
 import multiprocessing
 import os
 import pathlib
-import sys
-
-if sys.version_info[:2] <= (3, 9):
-    from sake import dataclasses
-else:
-    import dataclasses
 
 # 3rd party import
 import duckdb
@@ -108,7 +104,10 @@ class Sake:
           DataFrame with annotations column.
         """
         annotation_path_result = sake._utils.fix_annotation_path(
-            self.annotations_path, name, version, self.preindication,  # type: ignore[arg-type]
+            self.annotations_path,  # type: ignore[arg-type]
+            name,
+            version,
+            self.preindication,
         )
         if annotation_path_result is not None:
             (annotation_path, split_by_chr) = annotation_path_result
@@ -360,7 +359,10 @@ class Sake:
           DataFrame with annotations column.
         """
         annotation_path_result = sake._utils.fix_annotation_path(
-            self.annotations_path, name, version, self.preindication,  # type: ignore[arg-type]
+            self.annotations_path,  # type: ignore[arg-type]
+            name,
+            version,
+            self.preindication,
         )
         if annotation_path_result is not None:
             (annotation_path, split_by_chr) = annotation_path_result
