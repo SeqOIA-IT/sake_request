@@ -126,7 +126,7 @@ class Sake:
                 variants.group_by(["chr"]),
                 total=variants.get_column("chr").unique().len(),
             )
-            annotation_path = os.path.dirname(annotation_path)
+            annotation_path = annotation_path.parent
 
             query_obj = sake._utils.QueryByGroupBy(
                 self.threads // read_threads,  # type: ignore[operator]
@@ -321,23 +321,33 @@ class Sake:
 
         return polars.concat([df for df in all_transmissions if df is not None])
 
+    def __add_all_variants(self, name: str, _data: polars.DataFrame | None = None) -> polars.DataFrame:
+        """Merge add and all variants code."""
+        iterator = sake._utils.wrap_iterator(
+            self.activate_tqdm,  # type: ignore[arg-type]
+            sake._utils.get_chromosome_path(self.variants_path),  # type: ignore[arg-type]
+        )
+
+        all_variants = []
+        for path in iterator:
+            all_variants.append(
+                self.db.execute(
+                    sake.QUERY[name],
+                    {
+                        "path": str(path),
+                    },
+                ).pl(),
+            )
+
+        return polars.concat(all_variants)
+
     def add_variants(self, _data: polars.DataFrame) -> polars.DataFrame:
         """Use id of column polars.DataFrame to get variant information."""
-        return self.db.execute(
-            sake.QUERY["add_variants"],
-            {
-                "path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
-            },
-        ).pl()
+        return self.__add_all_variants("add_variants", _data)
 
     def all_variants(self) -> polars.DataFrame:
         """Get all variants of a target in present in Sake."""
-        return self.db.execute(
-            sake.QUERY["all_variants"],
-            {
-                "path": sake._utils.fix_variants_path(self.variants_path, None),  # type: ignore[arg-type]
-            },
-        ).pl()
+        return self.__add_all_variants("all_variants")
 
     def get_annotations(
         self,
@@ -377,23 +387,20 @@ class Sake:
 
         query = sake.QUERY["get_annotations"].format(columns=columns)
         if split_by_chr:
-            chromosomes_path = [
-                entry.path
-                for entry in os.scandir(os.path.dirname(annotation_path))
-                if entry.is_file() and entry.name.endswith(".parquet")
-            ]
+            annotations_path = sake._utils.get_chromosome_path(annotation_path.parent)
+            variants_path = sake._utils.get_chromosome_path(self.variants_path)  # type: ignore[arg-type]
             iterator = sake._utils.wrap_iterator(
                 self.activate_tqdm,  # type: ignore[arg-type]
-                chromosomes_path,
+                zip(annotations_path, variants_path),
             )
 
             all_annotations = []
-            for path in iterator:
+            for annotation_path, variant_path in iterator:
                 chrom_result = self.db.execute(
                     query,
                     {
-                        "annotation_path": path,
-                        "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
+                        "annotation_path": str(annotation_path),
+                        "variant_path": str(variant_path),
                     },
                 ).pl()
 
@@ -405,7 +412,7 @@ class Sake:
                 query,
                 {
                     "annotation_path": annotation_path,
-                    "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
+                    "variant_path": f"{self.variants_path}/*.parquet",
                 },
             ).pl()
 
@@ -448,7 +455,7 @@ class Sake:
         return self.db.execute(
             sake.QUERY["get_interval"],
             {
-                "path": sake._utils.fix_variants_path(self.variants_path, chrom),  # type: ignore[arg-type]
+                "path": str(self.variants_path / f"{chrom}.parquet"),  # type: ignore[operator]
                 "chrom": chrom,
                 "start": start,
                 "stop": stop,
@@ -476,7 +483,7 @@ class Sake:
                 "sample_path": str(
                     self.prescriptions_path / f"{prescription}.parquet",  # type: ignore[operator]
                 ),
-                "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
+                "variant_path": f"{self.variants_path}/*.parquet",
             },
         ).pl()
 
@@ -491,7 +498,7 @@ class Sake:
                     sake.QUERY["get_variant_of_prescription"],
                     {
                         "sample_path": str(self.prescriptions_path / f"{pid}.parquet"),  # type: ignore[operator]
-                        "variant_path": sake._utils.fix_variants_path(self.variants_path),  # type: ignore[arg-type]
+                        "variant_path": f"{self.variants_path}/*.parquet",
                     },
                 ).pl(),
             )

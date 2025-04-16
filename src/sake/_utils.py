@@ -4,6 +4,7 @@ from __future__ import annotations
 
 # std import
 import os
+import pathlib
 import typing
 
 # 3rd party import
@@ -16,11 +17,10 @@ import sake
 if typing.TYPE_CHECKING:  # pragma: no cover
     # std import
     import collections
-    import pathlib
 
     import polars
 
-__all__ = ["QueryByGroupBy", "fix_annotation_path", "fix_variants_path", "wrap_iterator"]
+__all__ = ["QueryByGroupBy", "fix_annotation_path", "get_chromosome_path", "wrap_iterator"]
 
 
 def wrap_iterator(
@@ -37,13 +37,26 @@ def wrap_iterator(
     return iterator
 
 
-def fix_variants_path(path: pathlib.Path, chrom: str | None = None) -> str:
-    """Fix variants path to match if variants are split or not."""
-    if chrom is None and path.is_dir():
-        return str(path / "*.parquet")
-    if path.is_dir():
-        return str(path / f"{chrom}.parquet")
-    return str(path.with_suffix(".parquet"))
+def get_chromosome_path(
+    prefix: pathlib.Path,
+    chroms: list[str] | None = None,
+) -> collections.abc.Generator[pathlib.Path, None, None]:
+    """Get variants path list by list value in prefix.
+
+    Parameter:
+      prefix: path where variants file should exist
+      chroms: if set only file with basename present in list are present in output
+    """
+    if chroms is not None:
+        for chrom in chroms:
+            path = prefix / f"{chrom}.parquet"
+            if path.is_file():
+                yield path
+    else:
+        with os.scandir(prefix) as iterator:
+            for entry in iterator:
+                if entry.is_file() and entry.name.endswith(".parquet"):
+                    yield pathlib.Path(str(entry.path))
 
 
 def fix_annotation_path(
@@ -52,7 +65,7 @@ def fix_annotation_path(
     version: str,
     preindication: str,
     chrom_basename: str = "1",
-) -> tuple[str, bool] | None:
+) -> tuple[pathlib.Path, bool] | None:
     """Generate annotation path by check present of file.
 
     Return:
@@ -61,23 +74,23 @@ def fix_annotation_path(
     """
     path = annotations_path / name / version / preindication / f"{chrom_basename}.parquet"
     if path.is_file():
-        return (str(path), True)
+        return (path, True)
 
     path = annotations_path / name / version / f"{preindication}.parquet"
     if path.is_file():
-        return (str(path), False)
+        return (path, False)
 
     path = annotations_path / name / version / f"{chrom_basename}.parquet"
     if path.is_file():
-        return (str(path), True)
+        return (path, True)
 
     path = annotations_path / name / f"{version}.parquet"
     if path.is_file():
-        return (str(path), False)
+        return (path, False)
 
     path = annotations_path / name / f"{chrom_basename}.parquet"
     if path.is_file():
-        return (str(path), True)
+        return (path, True)
 
     return None
 

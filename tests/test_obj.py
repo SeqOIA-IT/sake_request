@@ -11,6 +11,7 @@ import polars
 import polars.testing
 
 # project import
+import sake as sake_module
 from sake import Sake
 
 TRUTH = polars.DataFrame(
@@ -555,7 +556,12 @@ def test_get_all() -> None:
 
     result = sake.all_variants()
 
-    truth = polars.read_parquet("tests/data/germline/variants.parquet")
+    truth = polars.concat(
+        [
+            polars.read_parquet(path)
+            for path in sake_module._utils.get_chromosome_path(pathlib.Path("tests/data/germline/variants"))
+        ],
+    )
 
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
