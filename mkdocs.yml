@@ -113,7 +113,8 @@ plugins:
     handlers:
       python:
 #        inventories:
-#        - https://docs.python.org/3/objects.inv
+#          - http://docs.python.org/3/objects.inv
+#          - https://pola-rs.github.io/polars/py-polars/html/objects.inv
         paths: [src]
         options:
           backlinks: tree
