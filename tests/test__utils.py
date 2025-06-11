@@ -12,6 +12,11 @@ from tqdm.auto import tqdm
 import sake
 
 
+def test_flatten_tuples() -> None:
+    """Check flatten tuples."""
+    assert list(sake._utils.flatten_tuples((0, 1, (2, 3), (4), (5, 6, (7, 8, 9))))) == list(range(10))
+
+
 def test_wrap_iterator() -> None:
     """Check fix wrap iterator."""
     assert sake._utils.wrap_iterator(False, range(10), total=10) == range(10)  # noqa: FBT003
