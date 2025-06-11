@@ -578,6 +578,18 @@ def test_get_interval() -> None:
     polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
 
 
+def test_get_interval_with_comment() -> None:
+    """Check get interval."""
+    sake_path = pathlib.Path("tests/data")
+    sake = Sake(sake_path, "germline")
+
+    result = sake.get_interval("X", 47115191, 99009863, polars.lit("test").alias("test"))
+
+    truth = TRUTH.select("id", "chr", "pos", "ref", "alt").unique("id").with_columns(test=polars.lit("test"))
+
+    polars.testing.assert_frame_equal(result, truth, check_row_order=False, check_column_order=False)
+
+
 def test_get_intervals() -> None:
     """Check get interval."""
     sake_path = pathlib.Path("tests/data")

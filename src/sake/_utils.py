@@ -20,7 +20,16 @@ if typing.TYPE_CHECKING:  # pragma: no cover
 
     import polars
 
-__all__ = ["QueryByGroupBy", "fix_annotation_path", "get_chromosome_path", "wrap_iterator"]
+__all__ = ["QueryByGroupBy", "fix_annotation_path", "flatten_tuples", "get_chromosome_path", "wrap_iterator"]
+
+
+def flatten_tuples(t: (typing.Any)) -> typing.Any:
+    """Flatten nested tuples."""
+    for x in t:
+        if isinstance(x, tuple):
+            yield from flatten_tuples(x)
+        else:
+            yield x
 
 
 def wrap_iterator(

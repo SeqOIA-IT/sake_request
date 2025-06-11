@@ -458,9 +458,15 @@ class Sake:
         """Get cnv by sample."""
         return polars.read_parquet(self.cnv_path / "samples" / sample / f"{tools}.parquet")  # type: ignore[operator]
 
-    def get_interval(self, chrom: str, start: int, stop: int) -> polars.DataFrame:
+    def get_interval(
+        self,
+        chrom: str,
+        start: int,
+        stop: int,
+        comment: polars.typing.IntoExpr | None = None,
+    ) -> polars.DataFrame:
         """Get variants from chromosome between start and stop."""
-        return self.db.execute(
+        df = self.db.execute(
             sake.QUERY["get_interval"],
             {
                 "path": str(self.variants_path / f"{chrom}.parquet"),  # type: ignore[operator]
@@ -470,15 +476,40 @@ class Sake:
             },
         ).pl()
 
-    def get_intervals(self, chroms: list[str], starts: list[int], stops: list[int]) -> polars.DataFrame:
+        if comment is None:
+            return df
+        return df.with_columns(comment)
+
+    def get_intervals(
+        self,
+        chroms: list[str],
+        starts: list[int],
+        stops: list[int],
+        comments: list[polars.typing.IntoExpr] | None = None,
+    ) -> polars.DataFrame:
         """Get variants in multiple intervals."""
         all_variants = []
         minimal_length = min(len(chroms), len(starts), len(stops))
-        iterator = sake._utils.wrap_iterator(self.activate_tqdm, zip(chroms, zip(starts, stops)), total=minimal_length)  # type: ignore[arg-type]
+        if comments is None:
+            iterator = sake._utils.wrap_iterator(
+                self.activate_tqdm,  # type: ignore[arg-type]
+                zip(chroms, zip(starts, stops)),
+                total=minimal_length,
+            )
+        else:
+            iterator = sake._utils.wrap_iterator(
+                self.activate_tqdm,  # type: ignore[arg-type]
+                zip(chroms, zip(starts, zip(stops, comments))),
+                total=minimal_length,
+            )
 
-        for chrom, (start, stop) in iterator:
+        for multi_value in iterator:
+            tmp = list(
+                sake._utils.flatten_tuples(multi_value),
+            )
+            chrom, start, stop, *comment = tmp
             all_variants.append(
-                self.get_interval(chrom, start, stop),
+                self.get_interval(chrom, start, stop, comment),
             )
 
         return polars.concat(all_variants)
