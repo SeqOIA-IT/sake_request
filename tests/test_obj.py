@@ -549,6 +549,24 @@ def test_set_value() -> None:
     assert database.genotype_columns == ["gt", "ad"]
 
 
+def test_empty_preindication() -> None:
+    """Check path when preindication isn't set."""
+    sake_path = pathlib.Path("tests/data")
+    database = Sake(sake_path, "")
+
+    assert database.sake_path == sake_path
+    assert database.aggregations_path == sake_path / "aggregations"
+    assert database.annotations_path == sake_path / "annotations"
+    assert database.cnv_path == sake_path / "cnv"
+    assert database.partitions_path == sake_path / "genotypes" / "partitions"
+    assert database.prescriptions_path == sake_path / "genotypes" / "samples"
+    assert database.samples_path == sake_path / "samples" / "patients.parquet"
+    assert database.str_path == sake_path / "str"
+    assert database.transmissions_path == sake_path / "genotypes" / "transmissions"
+    assert database.variants_path == sake_path / "variants"
+    assert database.genotype_columns == ["gt", "ad", "dp", "gq"]
+
+
 def test_get_all() -> None:
     """Check all variants."""
     sake_path = pathlib.Path("tests/data")

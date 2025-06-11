@@ -72,7 +72,7 @@ class Sake:
             if self.__getattribute__(key) is None:
                 str_value = str(value)
                 if "{target}" in str_value:
-                    str_value = str_value.format(target=self.preindication)
+                    str_value = str_value.format(target=self.preindication).lstrip("/")
 
                 if key.endswith("path"):
                     self.__setattr__(key, self.sake_path / str_value)
