@@ -23,8 +23,9 @@
     <span class=n>rename_column</span><span class=p>:</span> <span class=n><span title=bool>bool</span></span> <span class=o>=</span> <span class=kc>True</span><span class=p>,</span>
     <span class=n>select_columns</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>read_threads</span><span class=p>:</span> <span class=n><span title=int>int</span></span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>chrom_basename</span><span class=p>:</span> <span class=n><span title=str>str</span></span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Add annotations to variants.</p> <p>Require <code>id</code> column in variants value.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to annotate</p> </div> </li> <li class="doc-section-item field-body"> <b><code>name</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>Name of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>version</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>version of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>rename_column</code></b> (<code><span title=bool>bool</span></code>, default: <code>True</code> ) – <div class=doc-md-description> <p>prefix annotations column name with annotations name</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with annotations column.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 82</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Add annotations to variants.</p> <p>Require <code>id</code> column in variants value.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to annotate</p> </div> </li> <li class="doc-section-item field-body"> <b><code>name</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>Name of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>version</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>version of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>rename_column</code></b> (<code><span title=bool>bool</span></code>, default: <code>True</code> ) – <div class=doc-md-description> <p>prefix annotations column name with annotations name</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added</p> </div> </li> <li class="doc-section-item field-body"> <b><code>chrom_basename</code></b> (<code><span title=str>str</span> | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>basename of annotation filename use to detect format annotation file directory struct. If value is not set, function try to detect it automagicly.</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with annotations column.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 82</span>
 <span class=normal> 83</span>
 <span class=normal> 84</span>
 <span class=normal> 85</span>
@@ -102,7 +103,15 @@
 <span class=normal>157</span>
 <span class=normal>158</span>
 <span class=normal>159</span>
-<span class=normal>160</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_annotations</span><span class=p>(</span>
+<span class=normal>160</span>
+<span class=normal>161</span>
+<span class=normal>162</span>
+<span class=normal>163</span>
+<span class=normal>164</span>
+<span class=normal>165</span>
+<span class=normal>166</span>
+<span class=normal>167</span>
+<span class=normal>168</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_annotations</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>variants</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>,</span>
     <span class=n>name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
@@ -111,6 +120,7 @@
     <span class=n>rename_column</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>True</span><span class=p>,</span>
     <span class=n>select_columns</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>read_threads</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>chrom_basename</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Add annotations to variants.</span>
 
@@ -122,15 +132,22 @@
 <span class=sd>      version: version of annotations you want add to your variants</span>
 <span class=sd>      rename_column: prefix annotations column name with annotations name</span>
 <span class=sd>      select_columns: name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added</span>
+<span class=sd>      chrom_basename: basename of annotation filename use to detect format annotation file directory struct. If value is not set, function try to detect it automagicly.</span>
 
 <span class=sd>    Return:</span>
 <span class=sd>      DataFrame with annotations column.</span>
 <span class=sd>    &quot;&quot;&quot;</span>
+    <span class=k>if</span> <span class=n>chrom_basename</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=c1># chrom_basename Not set so we try found it</span>
+        <span class=c1># chromosome column is present get first value or try default value</span>
+        <span class=n>chrom_basename</span> <span class=o>=</span> <span class=nb>str</span><span class=p>(</span><span class=n>variants</span><span class=o>.</span><span class=n>get_column</span><span class=p>(</span><span class=s2>&quot;chr&quot;</span><span class=p>)</span><span class=o>.</span><span class=n>first</span><span class=p>())</span> <span class=k>if</span> <span class=s2>&quot;chr&quot;</span> <span class=ow>in</span> <span class=n>variants</span><span class=o>.</span><span class=n>schema</span> <span class=k>else</span> <span class=s2>&quot;1&quot;</span>
+
     <span class=n>annotation_path_result</span> <span class=o>=</span> <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>fix_annotation_path</span><span class=p>(</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>annotations_path</span><span class=p>,</span>  <span class=c1># type: ignore[arg-type]</span>
         <span class=n>name</span><span class=p>,</span>
         <span class=n>version</span><span class=p>,</span>
         <span class=bp>self</span><span class=o>.</span><span class=n>preindication</span><span class=p>,</span>
+        <span class=n>chrom_basename</span><span class=o>=</span><span class=n>chrom_basename</span><span class=p>,</span>
     <span class=p>)</span>
     <span class=k>if</span> <span class=n>annotation_path_result</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
         <span class=p>(</span><span class=n>annotation_path</span><span class=p>,</span> <span class=n>split_by_chr</span><span class=p>)</span> <span class=o>=</span> <span class=n>annotation_path_result</span>
@@ -189,15 +206,7 @@
     <span class=n>number_of_bits</span><span class=p>:</span> <span class=n><span title=int>int</span></span> <span class=o>=</span> <span class=mi>8</span><span class=p>,</span>
     <span class=n>read_threads</span><span class=p>:</span> <span class=n><span title=int>int</span></span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Add genotype information to variants DataFrame.</p> <p>Require <code>id</code> column in variants value.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add genotypes</p> </div> </li> <li class="doc-section-item field-body"> <b><code>keep_id_part</code></b> (<code><span title=bool>bool</span></code>, default: <code>False</code> ) – <div class=doc-md-description> <p>method add id_part column, set to True to keep_it</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of genotype column you want add to your DataFrame, if None all column are added</p> </div> </li> <li class="doc-section-item field-body"> <b><code>number_of_bits</code></b> (<code><span title=int>int</span></code>, default: <code>8</code> ) – <div class=doc-md-description> <p>number of bits use to compute partitions</p> </div> </li> <li class="doc-section-item field-body"> <b><code>read_threads</code></b> (<code><span title=int>int</span></code>, default: <code>1</code> ) – <div class=doc-md-description> <p>number of partitions file read in parallel</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with genotype information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>162</span>
-<span class=normal>163</span>
-<span class=normal>164</span>
-<span class=normal>165</span>
-<span class=normal>166</span>
-<span class=normal>167</span>
-<span class=normal>168</span>
-<span class=normal>169</span>
-<span class=normal>170</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Add genotype information to variants DataFrame.</p> <p>Require <code>id</code> column in variants value.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add genotypes</p> </div> </li> <li class="doc-section-item field-body"> <b><code>keep_id_part</code></b> (<code><span title=bool>bool</span></code>, default: <code>False</code> ) – <div class=doc-md-description> <p>method add id_part column, set to True to keep_it</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of genotype column you want add to your DataFrame, if None all column are added</p> </div> </li> <li class="doc-section-item field-body"> <b><code>number_of_bits</code></b> (<code><span title=int>int</span></code>, default: <code>8</code> ) – <div class=doc-md-description> <p>number of bits use to compute partitions</p> </div> </li> <li class="doc-section-item field-body"> <b><code>read_threads</code></b> (<code><span title=int>int</span></code>, default: <code>1</code> ) – <div class=doc-md-description> <p>number of partitions file read in parallel</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with genotype information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>170</span>
 <span class=normal>171</span>
 <span class=normal>172</span>
 <span class=normal>173</span>
@@ -249,7 +258,15 @@
 <span class=normal>219</span>
 <span class=normal>220</span>
 <span class=normal>221</span>
-<span class=normal>222</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_genotypes</span><span class=p>(</span>
+<span class=normal>222</span>
+<span class=normal>223</span>
+<span class=normal>224</span>
+<span class=normal>225</span>
+<span class=normal>226</span>
+<span class=normal>227</span>
+<span class=normal>228</span>
+<span class=normal>229</span>
+<span class=normal>230</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_genotypes</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>variants</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -315,15 +332,7 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>select_columns</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Add sample information.</p> <p>Required sample column in polars.DataFrame.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>_variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add sample information</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of sample information column you want add to your DataFrame, if None all column are added</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with sample information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>224</span>
-<span class=normal>225</span>
-<span class=normal>226</span>
-<span class=normal>227</span>
-<span class=normal>228</span>
-<span class=normal>229</span>
-<span class=normal>230</span>
-<span class=normal>231</span>
-<span class=normal>232</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Add sample information.</p> <p>Required sample column in polars.DataFrame.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>_variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add sample information</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of sample information column you want add to your DataFrame, if None all column are added</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with sample information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>232</span>
 <span class=normal>233</span>
 <span class=normal>234</span>
 <span class=normal>235</span>
@@ -347,7 +356,15 @@
 <span class=normal>253</span>
 <span class=normal>254</span>
 <span class=normal>255</span>
-<span class=normal>256</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_sample_info</span><span class=p>(</span>
+<span class=normal>256</span>
+<span class=normal>257</span>
+<span class=normal>258</span>
+<span class=normal>259</span>
+<span class=normal>260</span>
+<span class=normal>261</span>
+<span class=normal>262</span>
+<span class=normal>263</span>
+<span class=normal>264</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_sample_info</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>_variants</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -386,15 +403,7 @@
     <span class=n>select_columns</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>read_threads</span><span class=p>:</span> <span class=n><span title=int>int</span></span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Add transmissions information.</p> <p>Required pid_crc column in polars.DataFrame.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add genotypes</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of transmissions column you want add to your DataFrame, if None all column are added</p> </div> </li> <li class="doc-section-item field-body"> <b><code>read_threads</code></b> (<code><span title=int>int</span></code>, default: <code>1</code> ) – <div class=doc-md-description> <p>number of partitions file read in parallel</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with genotype information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>258</span>
-<span class=normal>259</span>
-<span class=normal>260</span>
-<span class=normal>261</span>
-<span class=normal>262</span>
-<span class=normal>263</span>
-<span class=normal>264</span>
-<span class=normal>265</span>
-<span class=normal>266</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Add transmissions information.</p> <p>Required pid_crc column in polars.DataFrame.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>variants</code></b> (<code><span title=polars.DataFrame>DataFrame</span></code>) – <div class=doc-md-description> <p>DataFrame you wish to add genotypes</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of transmissions column you want add to your DataFrame, if None all column are added</p> </div> </li> <li class="doc-section-item field-body"> <b><code>read_threads</code></b> (<code><span title=int>int</span></code>, default: <code>1</code> ) – <div class=doc-md-description> <p>number of partitions file read in parallel</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with genotype information.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>266</span>
 <span class=normal>267</span>
 <span class=normal>268</span>
 <span class=normal>269</span>
@@ -450,7 +459,15 @@
 <span class=normal>319</span>
 <span class=normal>320</span>
 <span class=normal>321</span>
-<span class=normal>322</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_transmissions</span><span class=p>(</span>
+<span class=normal>322</span>
+<span class=normal>323</span>
+<span class=normal>324</span>
+<span class=normal>325</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span>
+<span class=normal>329</span>
+<span class=normal>330</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_transmissions</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>variants</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -516,15 +533,15 @@
 
     <span class=k>return</span> <span class=n>polars</span><span class=o>.</span><span class=n>concat</span><span class=p>([</span><span class=n>df</span> <span class=k>for</span> <span class=n>df</span> <span class=ow>in</span> <span class=n>all_transmissions</span> <span class=k>if</span> <span class=n>df</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>])</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.add_variants class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">add_variants</span> <a href=#sake.Sake.add_variants class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>add_variants</span><span class=p>(</span><span class=n>_data</span><span class=p>:</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Use id of column polars.DataFrame to get variant information.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>344</span>
-<span class=normal>345</span>
-<span class=normal>346</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_variants</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>_data</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Use id of column polars.DataFrame to get variant information.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>352</span>
+<span class=normal>353</span>
+<span class=normal>354</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_variants</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>_data</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Use id of column polars.DataFrame to get variant information.&quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>__add_all_variants</span><span class=p>(</span><span class=s2>&quot;add_variants&quot;</span><span class=p>,</span> <span class=n>_data</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.all_variants class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">all_variants</span> <a href=#sake.Sake.all_variants class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>all_variants</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of a target in present in Sake.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>348</span>
-<span class=normal>349</span>
-<span class=normal>350</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>all_variants</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of a target in present in Sake.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>356</span>
+<span class=normal>357</span>
+<span class=normal>358</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>all_variants</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get all variants of a target in present in Sake.&quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>__add_all_variants</span><span class=p>(</span><span class=s2>&quot;all_variants&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_annotations class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_annotations</span> <a href=#sake.Sake.get_annotations class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_annotations</span><span class=p>(</span>
@@ -534,15 +551,7 @@
     <span class=n>rename_column</span><span class=p>:</span> <span class=n><span title=bool>bool</span></span> <span class=o>=</span> <span class=kc>True</span><span class=p>,</span>
     <span class=n>select_columns</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of an annotations.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>name</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>Name of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>version</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>version of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>rename_column</code></b> (<code><span title=bool>bool</span></code>, default: <code>True</code> ) – <div class=doc-md-description> <p>prefix annotations column name with annotations name</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with annotations column.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>352</span>
-<span class=normal>353</span>
-<span class=normal>354</span>
-<span class=normal>355</span>
-<span class=normal>356</span>
-<span class=normal>357</span>
-<span class=normal>358</span>
-<span class=normal>359</span>
-<span class=normal>360</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of an annotations.</p> <p><span class=doc-section-title>Parameters:</span></p> <ul> <li class="doc-section-item field-body"> <b><code>name</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>Name of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>version</code></b> (<code><span title=str>str</span></code>) – <div class=doc-md-description> <p>version of annotations you want add to your variants</p> </div> </li> <li class="doc-section-item field-body"> <b><code>rename_column</code></b> (<code><span title=bool>bool</span></code>, default: <code>True</code> ) – <div class=doc-md-description> <p>prefix annotations column name with annotations name</p> </div> </li> <li class="doc-section-item field-body"> <b><code>select_columns</code></b> (<code><span title=list>list</span>[<span title=str>str</span>] | None</code>, default: <code>None</code> ) – <div class=doc-md-description> <p>name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added</p> </div> </li> </ul> <details class=return open> <summary>Return</summary> <p>DataFrame with annotations column.</p> </details> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>360</span>
 <span class=normal>361</span>
 <span class=normal>362</span>
 <span class=normal>363</span>
@@ -606,7 +615,15 @@
 <span class=normal>421</span>
 <span class=normal>422</span>
 <span class=normal>423</span>
-<span class=normal>424</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_annotations</span><span class=p>(</span>
+<span class=normal>424</span>
+<span class=normal>425</span>
+<span class=normal>426</span>
+<span class=normal>427</span>
+<span class=normal>428</span>
+<span class=normal>429</span>
+<span class=normal>430</span>
+<span class=normal>431</span>
+<span class=normal>432</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_annotations</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>version</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
@@ -688,15 +705,7 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>exact</span><span class=p>:</span> <span class=n><span title=bool>bool</span></span> <span class=o>=</span> <span class=kc>True</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get cnv from chromosome between start and stop.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>426</span>
-<span class=normal>427</span>
-<span class=normal>428</span>
-<span class=normal>429</span>
-<span class=normal>430</span>
-<span class=normal>431</span>
-<span class=normal>432</span>
-<span class=normal>433</span>
-<span class=normal>434</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get cnv from chromosome between start and stop.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>434</span>
 <span class=normal>435</span>
 <span class=normal>436</span>
 <span class=normal>437</span>
@@ -709,7 +718,15 @@
 <span class=normal>444</span>
 <span class=normal>445</span>
 <span class=normal>446</span>
-<span class=normal>447</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_cnv</span><span class=p>(</span>
+<span class=normal>447</span>
+<span class=normal>448</span>
+<span class=normal>449</span>
+<span class=normal>450</span>
+<span class=normal>451</span>
+<span class=normal>452</span>
+<span class=normal>453</span>
+<span class=normal>454</span>
+<span class=normal>455</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_cnv</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>chrom</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>start</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span>
@@ -732,39 +749,22 @@
         <span class=p>},</span>
     <span class=p>)</span><span class=o>.</span><span class=n>pl</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_cnv_by_sample class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_cnv_by_sample</span> <a href=#sake.Sake.get_cnv_by_sample class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_cnv_by_sample</span><span class=p>(</span><span class=n>sample</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>,</span> <span class=n>tools</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get cnv by sample.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>449</span>
-<span class=normal>450</span>
-<span class=normal>451</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_cnv_by_sample</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>sample</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>tools</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get cnv by sample.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>457</span>
+<span class=normal>458</span>
+<span class=normal>459</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_cnv_by_sample</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>sample</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>tools</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get cnv by sample.&quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=n>polars</span><span class=o>.</span><span class=n>read_parquet</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>cnv_path</span> <span class=o>/</span> <span class=s2>&quot;samples&quot;</span> <span class=o>/</span> <span class=n>sample</span> <span class=o>/</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>tools</span><span class=si>}</span><span class=s2>.parquet&quot;</span><span class=p>)</span>  <span class=c1># type: ignore[operator]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_interval class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_interval</span> <a href=#sake.Sake.get_interval class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_interval</span><span class=p>(</span>
-    <span class=n>chrom</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>,</span> <span class=n>start</span><span class=p>:</span> <span class=n><span title=int>int</span></span><span class=p>,</span> <span class=n>stop</span><span class=p>:</span> <span class=n><span title=int>int</span></span>
+    <span class=n>chrom</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>,</span>
+    <span class=n>start</span><span class=p>:</span> <span class=n><span title=int>int</span></span><span class=p>,</span>
+    <span class=n>stop</span><span class=p>:</span> <span class=n><span title=int>int</span></span><span class=p>,</span>
+    <span class=n>comment</span><span class=p>:</span> <span class=n><span title=polars.typing.IntoExpr>IntoExpr</span></span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get variants from chromosome between start and stop.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>453</span>
-<span class=normal>454</span>
-<span class=normal>455</span>
-<span class=normal>456</span>
-<span class=normal>457</span>
-<span class=normal>458</span>
-<span class=normal>459</span>
-<span class=normal>460</span>
-<span class=normal>461</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get variants from chromosome between start and stop.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>461</span>
 <span class=normal>462</span>
-<span class=normal>463</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_interval</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>chrom</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span> <span class=n>start</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>stop</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get variants from chromosome between start and stop.&quot;&quot;&quot;</span>
-    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>db</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span>
-        <span class=n>sake</span><span class=o>.</span><span class=n>QUERY</span><span class=p>[</span><span class=s2>&quot;get_interval&quot;</span><span class=p>],</span>
-        <span class=p>{</span>
-            <span class=s2>&quot;path&quot;</span><span class=p>:</span> <span class=nb>str</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>variants_path</span> <span class=o>/</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>chrom</span><span class=si>}</span><span class=s2>.parquet&quot;</span><span class=p>),</span>  <span class=c1># type: ignore[operator]</span>
-            <span class=s2>&quot;chrom&quot;</span><span class=p>:</span> <span class=n>chrom</span><span class=p>,</span>
-            <span class=s2>&quot;start&quot;</span><span class=p>:</span> <span class=n>start</span><span class=p>,</span>
-            <span class=s2>&quot;stop&quot;</span><span class=p>:</span> <span class=n>stop</span><span class=p>,</span>
-        <span class=p>},</span>
-    <span class=p>)</span><span class=o>.</span><span class=n>pl</span><span class=p>()</span>
-</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_intervals class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_intervals</span> <a href=#sake.Sake.get_intervals class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_intervals</span><span class=p>(</span>
-    <span class=n>chroms</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>],</span> <span class=n>starts</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=int>int</span></span><span class=p>],</span> <span class=n>stops</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=int>int</span></span><span class=p>]</span>
-<span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get variants in multiple intervals.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>465</span>
+<span class=normal>463</span>
+<span class=normal>464</span>
+<span class=normal>465</span>
 <span class=normal>466</span>
 <span class=normal>467</span>
 <span class=normal>468</span>
@@ -775,44 +775,46 @@
 <span class=normal>473</span>
 <span class=normal>474</span>
 <span class=normal>475</span>
-<span class=normal>476</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_intervals</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>chroms</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>],</span> <span class=n>starts</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>],</span> <span class=n>stops</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get variants in multiple intervals.&quot;&quot;&quot;</span>
-    <span class=n>all_variants</span> <span class=o>=</span> <span class=p>[]</span>
-    <span class=n>minimal_length</span> <span class=o>=</span> <span class=nb>min</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>chroms</span><span class=p>),</span> <span class=nb>len</span><span class=p>(</span><span class=n>starts</span><span class=p>),</span> <span class=nb>len</span><span class=p>(</span><span class=n>stops</span><span class=p>))</span>
-    <span class=n>iterator</span> <span class=o>=</span> <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>wrap_iterator</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>activate_tqdm</span><span class=p>,</span> <span class=nb>zip</span><span class=p>(</span><span class=n>chroms</span><span class=p>,</span> <span class=nb>zip</span><span class=p>(</span><span class=n>starts</span><span class=p>,</span> <span class=n>stops</span><span class=p>)),</span> <span class=n>total</span><span class=o>=</span><span class=n>minimal_length</span><span class=p>)</span>  <span class=c1># type: ignore[arg-type]</span>
-
-    <span class=k>for</span> <span class=n>chrom</span><span class=p>,</span> <span class=p>(</span><span class=n>start</span><span class=p>,</span> <span class=n>stop</span><span class=p>)</span> <span class=ow>in</span> <span class=n>iterator</span><span class=p>:</span>
-        <span class=n>all_variants</span><span class=o>.</span><span class=n>append</span><span class=p>(</span>
-            <span class=bp>self</span><span class=o>.</span><span class=n>get_interval</span><span class=p>(</span><span class=n>chrom</span><span class=p>,</span> <span class=n>start</span><span class=p>,</span> <span class=n>stop</span><span class=p>),</span>
-        <span class=p>)</span>
-
-    <span class=k>return</span> <span class=n>polars</span><span class=o>.</span><span class=n>concat</span><span class=p>(</span><span class=n>all_variants</span><span class=p>)</span>
-</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_variant_of_prescription class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_variant_of_prescription</span> <a href=#sake.Sake.get_variant_of_prescription class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_variant_of_prescription</span><span class=p>(</span><span class=n>prescription</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of a prescription.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>478</span>
+<span class=normal>476</span>
+<span class=normal>477</span>
+<span class=normal>478</span>
 <span class=normal>479</span>
 <span class=normal>480</span>
-<span class=normal>481</span>
-<span class=normal>482</span>
-<span class=normal>483</span>
+<span class=normal>481</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_interval</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>chrom</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>start</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span>
+    <span class=n>stop</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span>
+    <span class=n>comment</span><span class=p>:</span> <span class=n>polars</span><span class=o>.</span><span class=n>typing</span><span class=o>.</span><span class=n>IntoExpr</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get variants from chromosome between start and stop.&quot;&quot;&quot;</span>
+    <span class=n>df</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>db</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span>
+        <span class=n>sake</span><span class=o>.</span><span class=n>QUERY</span><span class=p>[</span><span class=s2>&quot;get_interval&quot;</span><span class=p>],</span>
+        <span class=p>{</span>
+            <span class=s2>&quot;path&quot;</span><span class=p>:</span> <span class=nb>str</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>variants_path</span> <span class=o>/</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>chrom</span><span class=si>}</span><span class=s2>.parquet&quot;</span><span class=p>),</span>  <span class=c1># type: ignore[operator]</span>
+            <span class=s2>&quot;chrom&quot;</span><span class=p>:</span> <span class=n>chrom</span><span class=p>,</span>
+            <span class=s2>&quot;start&quot;</span><span class=p>:</span> <span class=n>start</span><span class=p>,</span>
+            <span class=s2>&quot;stop&quot;</span><span class=p>:</span> <span class=n>stop</span><span class=p>,</span>
+        <span class=p>},</span>
+    <span class=p>)</span><span class=o>.</span><span class=n>pl</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=n>comment</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=k>return</span> <span class=n>df</span>
+    <span class=k>return</span> <span class=n>df</span><span class=o>.</span><span class=n>with_columns</span><span class=p>(</span><span class=n>comment</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_intervals class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_intervals</span> <a href=#sake.Sake.get_intervals class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_intervals</span><span class=p>(</span>
+    <span class=n>chroms</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>],</span>
+    <span class=n>starts</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=int>int</span></span><span class=p>],</span>
+    <span class=n>stops</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=int>int</span></span><span class=p>],</span>
+    <span class=n>comments</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=polars.typing.IntoExpr>IntoExpr</span></span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get variants in multiple intervals.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>483</span>
 <span class=normal>484</span>
 <span class=normal>485</span>
 <span class=normal>486</span>
 <span class=normal>487</span>
-<span class=normal>488</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_variant_of_prescription</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>prescription</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
-<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get all variants of a prescription.&quot;&quot;&quot;</span>
-    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>db</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span>
-        <span class=n>sake</span><span class=o>.</span><span class=n>QUERY</span><span class=p>[</span><span class=s2>&quot;get_variant_of_prescription&quot;</span><span class=p>],</span>
-        <span class=p>{</span>
-            <span class=s2>&quot;sample_path&quot;</span><span class=p>:</span> <span class=nb>str</span><span class=p>(</span>
-                <span class=bp>self</span><span class=o>.</span><span class=n>prescriptions_path</span> <span class=o>/</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>prescription</span><span class=si>}</span><span class=s2>.parquet&quot;</span><span class=p>,</span>  <span class=c1># type: ignore[operator]</span>
-            <span class=p>),</span>
-            <span class=s2>&quot;variant_path&quot;</span><span class=p>:</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>variants_path</span><span class=si>}</span><span class=s2>/*.parquet&quot;</span><span class=p>,</span>
-        <span class=p>},</span>
-    <span class=p>)</span><span class=o>.</span><span class=n>pl</span><span class=p>()</span>
-</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_variant_of_prescriptions class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_variant_of_prescriptions</span> <a href=#sake.Sake.get_variant_of_prescriptions class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_variant_of_prescriptions</span><span class=p>(</span>
-    <span class=n>prescriptions</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>],</span>
-<span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of multiple prescriptions.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>490</span>
+<span class=normal>488</span>
+<span class=normal>489</span>
+<span class=normal>490</span>
 <span class=normal>491</span>
 <span class=normal>492</span>
 <span class=normal>493</span>
@@ -828,7 +830,90 @@
 <span class=normal>503</span>
 <span class=normal>504</span>
 <span class=normal>505</span>
-<span class=normal>506</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_variant_of_prescriptions</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>prescriptions</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+<span class=normal>506</span>
+<span class=normal>507</span>
+<span class=normal>508</span>
+<span class=normal>509</span>
+<span class=normal>510</span>
+<span class=normal>511</span>
+<span class=normal>512</span>
+<span class=normal>513</span>
+<span class=normal>514</span>
+<span class=normal>515</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_intervals</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>chroms</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>],</span>
+    <span class=n>starts</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>],</span>
+    <span class=n>stops</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>],</span>
+    <span class=n>comments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>polars</span><span class=o>.</span><span class=n>typing</span><span class=o>.</span><span class=n>IntoExpr</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get variants in multiple intervals.&quot;&quot;&quot;</span>
+    <span class=n>all_variants</span> <span class=o>=</span> <span class=p>[]</span>
+    <span class=n>minimal_length</span> <span class=o>=</span> <span class=nb>min</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>chroms</span><span class=p>),</span> <span class=nb>len</span><span class=p>(</span><span class=n>starts</span><span class=p>),</span> <span class=nb>len</span><span class=p>(</span><span class=n>stops</span><span class=p>))</span>
+    <span class=k>if</span> <span class=n>comments</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>iterator</span> <span class=o>=</span> <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>wrap_iterator</span><span class=p>(</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>activate_tqdm</span><span class=p>,</span>  <span class=c1># type: ignore[arg-type]</span>
+            <span class=nb>zip</span><span class=p>(</span><span class=n>chroms</span><span class=p>,</span> <span class=nb>zip</span><span class=p>(</span><span class=n>starts</span><span class=p>,</span> <span class=n>stops</span><span class=p>)),</span>
+            <span class=n>total</span><span class=o>=</span><span class=n>minimal_length</span><span class=p>,</span>
+        <span class=p>)</span>
+    <span class=k>else</span><span class=p>:</span>
+        <span class=n>iterator</span> <span class=o>=</span> <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>wrap_iterator</span><span class=p>(</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>activate_tqdm</span><span class=p>,</span>  <span class=c1># type: ignore[arg-type]</span>
+            <span class=nb>zip</span><span class=p>(</span><span class=n>chroms</span><span class=p>,</span> <span class=nb>zip</span><span class=p>(</span><span class=n>starts</span><span class=p>,</span> <span class=nb>zip</span><span class=p>(</span><span class=n>stops</span><span class=p>,</span> <span class=n>comments</span><span class=p>))),</span>
+            <span class=n>total</span><span class=o>=</span><span class=n>minimal_length</span><span class=p>,</span>
+        <span class=p>)</span>
+
+    <span class=k>for</span> <span class=n>multi_value</span> <span class=ow>in</span> <span class=n>iterator</span><span class=p>:</span>
+        <span class=n>tmp</span> <span class=o>=</span> <span class=nb>list</span><span class=p>(</span>
+            <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>flatten_tuples</span><span class=p>(</span><span class=n>multi_value</span><span class=p>),</span>
+        <span class=p>)</span>
+        <span class=n>chrom</span><span class=p>,</span> <span class=n>start</span><span class=p>,</span> <span class=n>stop</span><span class=p>,</span> <span class=o>*</span><span class=n>comment</span> <span class=o>=</span> <span class=n>tmp</span>
+        <span class=n>all_variants</span><span class=o>.</span><span class=n>append</span><span class=p>(</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>get_interval</span><span class=p>(</span><span class=n>chrom</span><span class=p>,</span> <span class=n>start</span><span class=p>,</span> <span class=n>stop</span><span class=p>,</span> <span class=n>comment</span><span class=p>),</span>
+        <span class=p>)</span>
+
+    <span class=k>return</span> <span class=n>polars</span><span class=o>.</span><span class=n>concat</span><span class=p>(</span><span class=n>all_variants</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_variant_of_prescription class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_variant_of_prescription</span> <a href=#sake.Sake.get_variant_of_prescription class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_variant_of_prescription</span><span class=p>(</span><span class=n>prescription</span><span class=p>:</span> <span class=n><span title=str>str</span></span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of a prescription.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>517</span>
+<span class=normal>518</span>
+<span class=normal>519</span>
+<span class=normal>520</span>
+<span class=normal>521</span>
+<span class=normal>522</span>
+<span class=normal>523</span>
+<span class=normal>524</span>
+<span class=normal>525</span>
+<span class=normal>526</span>
+<span class=normal>527</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_variant_of_prescription</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>prescription</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>&quot;&quot;&quot;Get all variants of a prescription.&quot;&quot;&quot;</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>db</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span>
+        <span class=n>sake</span><span class=o>.</span><span class=n>QUERY</span><span class=p>[</span><span class=s2>&quot;get_variant_of_prescription&quot;</span><span class=p>],</span>
+        <span class=p>{</span>
+            <span class=s2>&quot;sample_path&quot;</span><span class=p>:</span> <span class=nb>str</span><span class=p>(</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>prescriptions_path</span> <span class=o>/</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>prescription</span><span class=si>}</span><span class=s2>.parquet&quot;</span><span class=p>,</span>  <span class=c1># type: ignore[operator]</span>
+            <span class=p>),</span>
+            <span class=s2>&quot;variant_path&quot;</span><span class=p>:</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>variants_path</span><span class=si>}</span><span class=s2>/*.parquet&quot;</span><span class=p>,</span>
+        <span class=p>},</span>
+    <span class=p>)</span><span class=o>.</span><span class=n>pl</span><span class=p>()</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=sake.Sake.get_variant_of_prescriptions class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_variant_of_prescriptions</span> <a href=#sake.Sake.get_variant_of_prescriptions class=headerlink title="Permanent link">&para;</a></h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_variant_of_prescriptions</span><span class=p>(</span>
+    <span class=n>prescriptions</span><span class=p>:</span> <span class=n><span title=list>list</span></span><span class=p>[</span><span class=n><span title=str>str</span></span><span class=p>],</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n><span title=polars.DataFrame>DataFrame</span></span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get all variants of multiple prescriptions.</p> <details class=quote> <summary>Source code in <code>src/sake/obj.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>529</span>
+<span class=normal>530</span>
+<span class=normal>531</span>
+<span class=normal>532</span>
+<span class=normal>533</span>
+<span class=normal>534</span>
+<span class=normal>535</span>
+<span class=normal>536</span>
+<span class=normal>537</span>
+<span class=normal>538</span>
+<span class=normal>539</span>
+<span class=normal>540</span>
+<span class=normal>541</span>
+<span class=normal>542</span>
+<span class=normal>543</span>
+<span class=normal>544</span>
+<span class=normal>545</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_variant_of_prescriptions</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>prescriptions</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>str</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=n>polars</span><span class=o>.</span><span class=n>DataFrame</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get all variants of multiple prescriptions.&quot;&quot;&quot;</span>
     <span class=n>iterator</span> <span class=o>=</span> <span class=n>sake</span><span class=o>.</span><span class=n>_utils</span><span class=o>.</span><span class=n>wrap_iterator</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>activate_tqdm</span><span class=p>,</span> <span class=n>prescriptions</span><span class=p>)</span>  <span class=c1># type: ignore[arg-type]</span>
 
