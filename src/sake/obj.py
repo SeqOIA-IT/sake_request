@@ -88,6 +88,7 @@ class Sake:
         rename_column: bool = True,
         select_columns: list[str] | None = None,
         read_threads: int = 1,
+        chrom_basename: str | None = None,
     ) -> polars.DataFrame:
         """Add annotations to variants.
 
@@ -99,15 +100,22 @@ class Sake:
           version: version of annotations you want add to your variants
           rename_column: prefix annotations column name with annotations name
           select_columns: name of annotations column (same as is in annotations file) you want add to your DataFrame, if None all column are added
+          chrom_basename: basename of annotation filename use to detect format annotation file directory struct. If value is not set, function try to detect it automagicly.
 
         Return:
           DataFrame with annotations column.
         """
+        if chrom_basename is None:
+            # chrom_basename Not set so we try found it
+            # chromosome column is present get first value or try default value
+            chrom_basename = str(variants.get_column("chr").first()) if "chr" in variants.schema else "1"
+
         annotation_path_result = sake._utils.fix_annotation_path(
             self.annotations_path,  # type: ignore[arg-type]
             name,
             version,
             self.preindication,
+            chrom_basename=chrom_basename,
         )
         if annotation_path_result is not None:
             (annotation_path, split_by_chr) = annotation_path_result
