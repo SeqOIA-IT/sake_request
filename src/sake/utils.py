@@ -33,10 +33,16 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     Requirement:
     - id: variant id
     - gt: genotype
+    - sample: id of sample associate to genotype
     """
-    recurrence = data.group_by("id").agg(
-        sake_AC=polars.sum("gt"),
-        sake_nhomalt=(polars.col("gt") - 1).sum(),
+    recurrence = (
+        data.select("id", "gt", "sample")  # reduce memory impact by select only column usefull column before run unique
+        .unique()
+        .group_by("id")
+        .agg(
+            sake_AC=polars.sum("gt"),
+            sake_nhomalt=(polars.col("gt") - 1).sum(),
+        )
     )
 
     return data.join(recurrence, on="id", how="left")
