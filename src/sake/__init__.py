@@ -12,3 +12,5 @@ from sake.duckdb_query import QUERY
 from sake.obj import Sake
 
 __all__: list[str] = ["QUERY", "Sake", "_utils", "utils"]
+
+__version__ = "0.3.0"

@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.3.0](https://github.com/SeqOIA-IT/sake_request/releases/tag/0.3.0) - 2025-06-13
+
+<small>[Compare with 0.2.0](https://github.com/SeqOIA-IT/sake_request/compare/0.2.0...0.3.0)</small>
+
+### Breaking
+
+- drop support of python 3.9 ([0aec283](https://github.com/SeqOIA-IT/sake_request/commit/0aec283e1bc6b78c166461b46ed6bfd307ed52fa) by Pierre Marijon).
+
+### Features
+
+- better chromosome detection for add\_annotations and allow user to choose the chromosome name ([25c389](https://github.com/SeqOIA-IT/sake_request/commit/25c38981d091e7a936e10b3a642d66309b278653) by Pierre Marijon).
+- interval method now allow user to add comment to each interval ([9ae9f8d](https://github.com/SeqOIA-IT/sake_request/commit/9ae9f8d21939372a3a6abf2190e12339db6d7189) by Pierre Marijon).
+
+### Bug Fixes
+
+- add\_recurence perform unique before compute ([c865c85](https://github.com/SeqOIA-IT/sake_request/commit/c865c85d450b2e28e1c4c4419fb061601b8b61e9) by Pierre Marijon).
+- show utils submodule in documentation ([b661e37](https://github.com/SeqOIA-IT/sake_request/commit/b661e37f4e9b5a11eb6a302f5dd4c3d3f6cab73a) by Pierre Marijon).
+- if preindication is empty produce preindication path correctly ([6f8ca8](https://github.com/SeqOIA-IT/sake_request/commit/6f8ca83ea117e62621fc701a6761f0b5c543b2ae) by Pierre Marijon).
+
+### Code Refactoring
+
+- assume unique variants are split by chromosomes ([42ba623](https://github.com/SeqOIA-IT/sake_request/commit/42ba6236a655988be27a05d2d04b281773aa9d54) by Pierre Marijon).
+
 ## [0.2.0](https://github.com/SeqOIA-IT/sake_request/releases/tag/0.2.0) - 2025-04-15
 
 <small>[Compare with 0.1.0](https://github.com/SeqOIA-IT/sake_request/compare/0.1.0...0.2.0)</small>

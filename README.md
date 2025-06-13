@@ -8,7 +8,7 @@ A set of utils to interogate file of Seqoia Data Lake
 ## Installation
 
 ```bash
-pip install git+https://github.com/SeqOIA-IT/sake_request@0.2.0
+pip install git+https://github.com/SeqOIA-IT/sake_request@0.3.0
 ```
 
 ## Usage
