@@ -34,6 +34,12 @@ def add_recurrence(data: polars.DataFrame) -> polars.DataFrame:
     - id: variant id
     - gt: genotype
     - sample: id of sample associate to genotype
+
+    Parameters:
+      data: polars.DataFrame where compute recurrence.
+
+    Return:
+      data with sake_AC et sake_nhomalt columns.
     """
     recurrence = (
         data.select("id", "gt", "sample")  # reduce memory impact by select only column usefull column before run unique
@@ -57,12 +63,19 @@ def list2string(data: polars.DataFrame, *, columns: list[str], separator: str = 
 
 def get_list(
     data: polars.DataFrame,
-    *,
     columns: list[str],
+    *,
     index: int = 0,
     null_value: typing.Any = 0,
 ) -> polars.DataFrame:
-    """Replace list by value at index or null_value if index is out of bound."""
+    """Replace list by value at index or null_value if index is out of bound.
+
+    Parameters:
+      data: polars.DataFrame with list columns from which value is to be extracted
+      columns: List of columns containing a list from which a value is to be extracted
+      index: index of list you want extract
+      null_value: value set if index is out of list
+    """
     return data.with_columns(
         [polars.col(name).list.get(index, null_on_oob=True).fill_null(null_value).alias(name) for name in columns],
     )
