@@ -138,7 +138,7 @@ class QueryByGroupBy:
         else:
             query = sake.QUERY[self.query_name]
 
-        if not os.path.isfile(path):
+        if not os.path.isfile(path) or os.path.getsize(path) == 0:
             return None
 
         result = duckdb_db.execute(
